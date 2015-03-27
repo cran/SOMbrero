@@ -1,0 +1,43 @@
+## imports
+importFrom(scatterplot3d, scatterplot3d)
+importFrom(wordcloud, wordcloud)
+import(igraph)
+import(RColorBrewer)
+import(knitr)
+import(shiny)
+
+## exports
+# standard functions
+export(initGrid)
+export(initSOM)
+export(trainSOM)
+export(quality)
+export(superClass)
+export(protoDist)
+export(projectIGraph)
+export(sombreroGUI)
+
+# myGrid S3 functions
+S3method(print,myGrid)
+S3method(summary,myGrid)
+S3method(plot,myGrid)
+
+# paramSOM S3 functions
+S3method(print,paramSOM)
+S3method(summary,paramSOM)
+
+# somRes S3 functions
+S3method(print,somRes)
+S3method(summary,somRes)
+S3method(plot,somRes)
+S3method(predict,somRes)
+S3method(quality,somRes)
+S3method(superClass,somRes)
+S3method(protoDist,somRes)
+S3method(projectIGraph,somRes)
+
+# somSC S3 functions
+S3method(print,somSC)
+S3method(summary,somSC)
+S3method(projectIGraph,somSC)
+S3method(plot,somSC)
