@@ -6,9 +6,10 @@ data(presidentielles2002)
 apply(presidentielles2002, 2, sum)
 
 ## ----presiTrain, cache=TRUE----------------------------------------------
-set.seed(4031719)
+set.seed(01091407)
 korresp.som <- trainSOM(x.data=presidentielles2002, dimension=c(8,8),
-                        type="korresp", scaling="chi2", nb.save=10)
+                        type="korresp", scaling="chi2", nb.save=10,
+                        radius.type="letremy")
 korresp.som
 
 ## ----energyPresi---------------------------------------------------------
@@ -31,7 +32,7 @@ plot(korresp.som, what="prototypes", type="lines", view="c", print.title=TRUE)
 
 ## ----presiProtoC3d, fig.width=12, fig.height=6---------------------------
 par(mfrow=c(1,2))
-plot(korresp.som, what="prototypes", type="color", variable="LE_PEN")
+plot(korresp.som, what="prototypes", type="color", variable="TAUBIRA")
 plot(korresp.som, what="prototypes", type="3d", variable="martinique")
 
 ## ----presiProtoNumber, fig.width=12, fig.height=6------------------------

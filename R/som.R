@@ -87,7 +87,7 @@ calculateRadius <- function(the.grid, radius.type, ind.t, maxit) {
       r0 <- 1+(2/3)*sqrt(sum(the.grid$dim^2))
     r <- r0*(1/r0)^((ind.t-1)/(maxit-1))-1 # power decrease 
   }
-
+  
   r
 }
 
@@ -97,11 +97,11 @@ selectNei <- function(the.neuron, the.grid, radius, radius.type,
     if (dist.type=="letremy") {
       if (radius==0.5) {
         the.dist <- as.matrix(dist(the.grid$coord, diag=TRUE, upper=TRUE,
-                                          method="euclidean"))[the.neuron,]
+                                   method="euclidean"))[the.neuron,]
         the.nei <- which(the.dist<=1)
       } else {
         the.dist <- as.matrix(dist(the.grid$coord, diag=TRUE, upper=TRUE,
-                                 method="maximum"))[the.neuron,]
+                                   method="maximum"))[the.neuron,]
         the.nei <- which(the.dist<=radius)
       }
     } else {
@@ -115,7 +115,7 @@ selectNei <- function(the.neuron, the.grid, radius, radius.type,
     sigma <- quantile(proto.dist[upper.tri(proto.dist)]^2, 0.5)
     the.nei <- exp(-proto.dist[the.neuron,]^2/sigma/(radius+1)^2)
   }
-
+  
   the.nei
 }
 
@@ -147,7 +147,7 @@ calculateProtoDist <- function(prototypes, the.grid, type, complete=FALSE,
       })
       if (sum(unlist(distances)<0)>0)
         warning("some of the relational 'distances' are negatives\n
-  plots, qualities, super-clustering... may not work!",
+                plots, qualities, super-clustering... may not work!",
                 immediate.=TRUE, call.=TRUE)
     }
   } else {
@@ -158,13 +158,13 @@ calculateProtoDist <- function(prototypes, the.grid, type, complete=FALSE,
       })
       if (sum(distances<0)>0)
         warning("some of the relational 'distances' are negatives\n
-  plots, qualities, super-clustering... may not work!",
+                plots, qualities, super-clustering... may not work!",
                 immediate.=TRUE, call.=TRUE)
     } else distances <- as.matrix(dist(prototypes, upper=TRUE, diag=TRUE))
   }
   
   distances
-}
+  }
 
 ## Functions used during training of SOM
 # Step 2: Preprocess data ("korresp" case)
@@ -292,12 +292,14 @@ selectObs <- function(ind.t, ddim, type) {
 oneObsAffectation <- function(x.new, prototypes, type, affectation, x.data=NULL,
                               radius.type=NULL, radius=NULL, the.grid=NULL) {
   if (affectation=="standard") {
+    # kept in case new data is added in the model
     if (type=="relational") {
       the.neuron <- which.min(prototypes%*%x.new-
                                 0.5*diag(prototypes%*%x.data%*%
                                            t(prototypes)))
     } else the.neuron <- which.min(apply(prototypes, 1, distEuclidean, y=x.new))
   } else {# Heskes's soft affectation
+    # kept in case new data is added in the model
     if (type=="relational") {
       if (radius.type!="letremy") {
         the.dist <- prototypes%*%x.new-0.5*diag(prototypes%*%x.data%*%
@@ -344,11 +346,13 @@ oneObsAffectation <- function(x.new, prototypes, type, affectation, x.data=NULL,
 
 obsAffectation <- function(x.new, prototypes, type, affectation, x.data=NULL,
                            radius.type=NULL, radius=NULL, the.grid=NULL) {
-  if (is.null(dim(x.new))) {
+  if (is.null(dim(x.new)) || nrow(x.new) == 1) {
+    if (!is.null(dim(x.new))) x.new <- x.new[1, ]
     the.neuron <- oneObsAffectation(x.new, prototypes, type, affectation, 
                                     x.data, radius.type, radius, the.grid)
   } else {
     # distance between all prototypes and all data
+    # kept in case new data is added in the model
     if (type=="relational") {
       dist.1 <- -0.5*diag(prototypes%*%x.data%*%t(prototypes))
       dist.2 <- tcrossprod(prototypes, x.new)
@@ -376,12 +380,15 @@ obsAffectation <- function(x.new, prototypes, type, affectation, x.data=NULL,
         w.dist <- t(apply(u.weights, 1, function(awproto) {
           apply(sweep(all.dist, 1, awproto, "*"), 2, sum)
         }))
-        
       } else {
-        w.dist <- lapply(u.weights, function(awproto) {
-          apply(all.dist[awproto, ], 2, sum)
-        })
-        w.dist <- matrix(unlist(w.dist), nrow=25, byrow=TRUE)
+        if (radius == 0) {
+          w.dist <- all.dist
+        } else {
+          w.dist <- lapply(u.weights, function(awproto) {
+            apply(all.dist[awproto, ], 2, sum)
+          })
+          w.dist <- matrix(unlist(w.dist), nrow=25, byrow=TRUE)
+        }
       }
       the.neuron <- apply(w.dist, 2, which.min)
     }
@@ -435,7 +442,7 @@ calculateClusterEnergy <- function(cluster, x.data, clustering, prototypes,
                                  x.data%*%matrix(prototypes[cluster,]))
                  )))
   }
-    
+  
 }
 
 calculateEnergy <- function(x.data, clustering, prototypes, parameters, ind.t) {
@@ -458,11 +465,11 @@ trainSOM <- function (x.data, ...) {
   if (is.null(param.args$dimension)) {
     if (!is.null(param.args$type) && param.args$type=="korresp")
       param.args$dimension <- 
-      c(max(5,min(10,ceiling(sqrt((nrow(x.data)+ncol(x.data))/10)))), 
-        max(5,min(10,ceiling(sqrt((nrow(x.data)+ncol(x.data))/10)))))
+        c(max(5,min(10,ceiling(sqrt((nrow(x.data)+ncol(x.data))/10)))), 
+          max(5,min(10,ceiling(sqrt((nrow(x.data)+ncol(x.data))/10)))))
     else
       param.args$dimension <- c(max(5,min(10,ceiling(sqrt(nrow(x.data)/10)))), 
-                  max(5,min(10,ceiling(sqrt(nrow(x.data)/10)))))
+                                max(5,min(10,ceiling(sqrt(nrow(x.data)/10)))))
   }
   # Default maxit: nb.obs*5
   if (is.null(param.args$maxit)) {
@@ -473,7 +480,7 @@ trainSOM <- function (x.data, ...) {
   }
   # Check inputs
   if (!is.null(param.args$type) && param.args$type=="relational" && 
-        (!identical(x.data, t(x.data)) || (sum(diag(x.data)!=0)>0)))
+      (!identical(x.data, t(x.data)) || (sum(diag(x.data)!=0)>0)))
     stop("data do not match chosen SOM type ('relational')\n", call.=TRUE)
   
   # Initialize parameters and print
@@ -486,18 +493,18 @@ trainSOM <- function (x.data, ...) {
   # Check proto0 also now that the parameters have been initialized
   if (!is.null(parameters$proto0)) {
     if ((parameters$type=="korresp")&&
-          (!identical(dim(parameters$proto0),
-                      as.integer(c(prod(parameters$the.grid$dimension),
-                                   ncol(x.data)+nrow(x.data)))))) {
+        (!identical(dim(parameters$proto0),
+                    as.integer(c(prod(parameters$the.grid$dimension),
+                                 ncol(x.data)+nrow(x.data)))))) {
       stop("initial prototypes dimensions do not match SOM parameters:
-         in the current SOM, prototypes must have ", 
+           in the current SOM, prototypes must have ", 
            prod(parameters$the.grid$dimension), " rows and ", 
            ncol(x.data)+nrow(x.data), " columns\n", call.=TRUE)
     } else if (!identical(dim(parameters$proto0),
                           as.integer(c(prod(parameters$the.grid$dimension),
                                        ncol(x.data))))) {
       stop("initial prototypes dimensions do not match SOM parameters:
-         in the current SOM, prototypes must have ", 
+           in the current SOM, prototypes must have ", 
            prod(parameters$the.grid$dimension), " rows and ", 
            ncol(x.data), " columns\n", call.=TRUE)
     }
@@ -510,7 +517,14 @@ trainSOM <- function (x.data, ...) {
   ## Step 3: Initialize prototypes
   prototypes <- initProto(parameters, norm.x.data, x.data)
   
-  # Step 4: Iitialize backup if needed
+  ## Step 4: Initialize distances matrix if needed
+  if (parameters$type=="relational") {
+    B <- norm.x.data%*%t(prototypes)
+    A <- diag(prototypes%*%B)
+    lambda <- rep(0, length = nrow(prototypes))
+  }
+  
+  # Step 5: Iitialize backup if needed
   if(parameters$nb.save>1) {
     backup <- list()
     backup$prototypes <- list()
@@ -529,11 +543,11 @@ trainSOM <- function (x.data, ...) {
       }
     }
     
-    ## Step 5: Randomly choose an observation
+    ## Step 6: Randomly choose an observation
     rand.ind <- selectObs(ind.t, dim(x.data), parameters$type)
     sel.obs <- norm.x.data[rand.ind,]
     
-    ## Step 6: Assignment step
+    ## Step 7: Assignment step
     # For the "korresp" type, cut the prototypes and selected observation
     if (parameters$type=="korresp") {
       if (ind.t%%2==0) {
@@ -551,23 +565,63 @@ trainSOM <- function (x.data, ...) {
     radius <- calculateRadius(parameters$the.grid, parameters$radius.type,
                               ind.t, parameters$maxit)
     # Assign
-    winner <- oneObsAffectation(cur.obs, cur.prototypes, parameters$type,
-                                parameters$affectation, norm.x.data, 
-                                parameters$radius.type, radius, 
-                                parameters$the.grid)
+    if (parameters$type=="relational") {
+      if (parameters$affectation=="standard") {
+        winner <- which.min(B[rand.ind,]-0.5*A)
+      } else {# Heskes's soft affectation
+        if (parameters$radius.type!="letremy") {
+          the.dist <- B[rand.ind,]-0.5*A
+          final.dist <- sapply(1:nrow(prototypes), function(a.neuron) {
+            the.nei <- selectNei(a.neuron, parameters$the.grid, radius, 
+                                 parameters$radius.type, parameters$the.grid$dist.type)
+            return(sum(the.dist*the.nei))
+          })
+          winner <- which.min(final.dist)
+        } else {
+          the.dist <- B[rand.ind,]-0.5*A
+          final.dist <- sapply(1:nrow(prototypes), function(a.neuron) {
+            the.nei <- selectNei(a.neuron, parameters$the.grid, radius, 
+                                 parameters$radius.type, parameters$the.grid$dist.type)
+            return(sum(the.dist[the.nei]))
+          })
+          winner <- which.min(final.dist)
+        }
+      }
+    } else {
+      winner <- oneObsAffectation(cur.obs, cur.prototypes, parameters$type,
+                                  parameters$affectation, norm.x.data, 
+                                  parameters$radius.type, radius, 
+                                  parameters$the.grid)
+    }
     
-    ## Step 7: Representation step
+    ## Step 8: Representation step
     the.nei <- selectNei(winner, parameters$the.grid, radius, 
                          radius.type=parameters$radius.type,
                          dist.type=parameters$the.grid$dist.type)
-
+    
     epsilon <- 0.3*parameters$eps0/(1+0.2*ind.t/prod(parameters$the.grid$dim))
+    
+    if (parameters$type=="relational") {
+      # compute lambda
+      if (parameters$radius.type!="letremy") {
+        lambda <- as.vector(epsilon*the.nei)
+      } else {
+        lambda <- rep(0, length = nrow(prototypes))
+        lambda[the.nei] <- epsilon
+      }
+      # update distances matrix
+      A <- (1 - lambda)^2 * A + lambda^2 * norm.x.data[rand.ind,rand.ind] + 
+        2 * lambda * (1 - lambda) * B[rand.ind, ]
+      B <- sweep(B, 2, 1 - lambda, "*") + 
+        outer(norm.x.data[ ,rand.ind], lambda, "*")
+    }
+    
     # Update
     prototypes <- prototypeUpdate(parameters$type, the.nei, epsilon, 
                                   prototypes, rand.ind, sel.obs,
                                   parameters$radius.type)
     
-    ## Step 8: Intermediate backups (if needed)
+    ## Step 9: Intermediate backups (if needed)
     if (parameters$nb.save==1) {
       warning("nb.save can not be 1\n No intermediate backups saved",
               immediate.=TRUE, call.=TRUE)
@@ -593,7 +647,9 @@ trainSOM <- function (x.data, ...) {
         
         ind.s <- match(ind.t,backup$steps)
         backup$prototypes[[ind.s]] <- out.proto
-        backup$clustering[,ind.s] <- predict.somRes(res, radius=radius)
+        if (parameters$type=="relational") {
+          backup$clustering[,ind.s] <- predictRSOM(res, radius=radius, A=A, B=B)
+        } else backup$clustering[,ind.s] <- predict.somRes(res, radius=radius)
         backup$energy[ind.s] <- calculateEnergy(norm.x.data,
                                                 backup$clustering[,ind.s],
                                                 prototypes, parameters, ind.t)
@@ -621,7 +677,9 @@ trainSOM <- function (x.data, ...) {
       res <- list("parameters"=parameters, "prototypes"=out.proto,
                   "data"=x.data)
       class(res) <- "somRes"
-      clustering <- predict.somRes(res)
+      if (parameters$type=="relational") {
+        clustering <- predictRSOM(res, A=A, B=B)
+      } else clustering <- predict.somRes(res)
       if (parameters$type=="korresp") {
         names(clustering) <- c(colnames(x.data), rownames(x.data))
       } else names(clustering) <- rownames(x.data)
@@ -677,13 +735,13 @@ projectGraph <- function(the.graph, clustering, coord.clustering) {
       }
     }
   }
-  proj.graph <- graph.data.frame(matrix(p.edges, ncol=2, byrow=TRUE),
-                                 directed=FALSE, 
-                                 vertices=data.frame("name"=nonempty.neurons,
-                                                     "size"=v.sizes))
+  proj.graph <- 
+    graph_from_data_frame(matrix(p.edges, ncol=2, byrow=TRUE), directed=FALSE, 
+                          vertices=data.frame("name"=nonempty.neurons,
+                                              "size"=v.sizes))
   E(proj.graph)$weight <- p.edges.weights
-  proj.graph <- set.graph.attribute(proj.graph, "layout",
-                                    coord.clustering[nonempty.neurons,])
+  proj.graph <- set_graph_attr(proj.graph, "layout",
+                               coord.clustering[nonempty.neurons,])
   return(proj.graph)
 }
 
@@ -721,7 +779,7 @@ summary.somRes <- function(object, ...) {
     res.anova$significativity[res.anova$"pvalue"<0.01] <- "**"
     res.anova$significativity[res.anova$"pvalue"<0.001] <- "***"
     rownames(res.anova) <- colnames(object$data)
-  
+    
     cat("\n        Degrees of freedom : ", 
         summary(aov(object$data[,1]~as.factor(object$clustering)))[[1]][1,1],
         "\n\n")
@@ -766,7 +824,47 @@ summary.somRes <- function(object, ...) {
   } 
 }
 
-predict.somRes <- function(object, x.new=NULL, ..., radius=0,
+predictRSOM <- function(object, x.new=NULL, radius=0, tolerance=10^(-10), 
+                        A=NULL, B=NULL) {
+  if (is.null(A) || is.null(B)) {
+    winners <- predict.somRes(object, x.new=x.new, radius=radius,
+                              tolerance=tolerance)
+  } else {
+    # distance between all prototypes and all data
+    all.dist <- sweep(t(B), 1, -0.5*A, "+")
+    # affectation to the closest prototype
+    if (object$parameters$affectation=="standard") {
+      winners <- apply(all.dist, 2, which.min)
+    } else {
+      # Heskes's soft affectation
+      u.weights <- sapply(1:nrow(object$prototypes), function(a.neuron) {
+        the.nei <- selectNei(a.neuron, object$parameters$the.grid, radius, 
+                             object$parameters$radius.type,
+                             object$parameters$the.grid$dist.type)
+        return(the.nei)
+      })
+      if (object$parameters$radius.type != "letremy") {
+        w.dist <- t(apply(u.weights, 1, function(awproto) {
+          apply(sweep(all.dist, 1, awproto, "*"), 2, sum)
+        }))
+        
+      } else {
+        if (radius == 0) {
+          w.dist <- all.dist
+        } else {
+          w.dist <- lapply(u.weights, function(awproto) {
+            apply(all.dist[awproto, ], 2, sum)
+          })
+          w.dist <- matrix(unlist(w.dist), nrow=25, byrow=TRUE)
+        }
+      }
+      winners <- apply(w.dist, 2, which.min)
+    }
+  }
+  return(winners)
+}
+
+predict.somRes <- function(object, x.new=NULL, ..., radius=0, 
                            tolerance=10^(-10)) {
   ## korresp
   if(object$parameters$type=="korresp") {
@@ -795,7 +893,7 @@ predict.somRes <- function(object, x.new=NULL, ..., radius=0,
                      radius.type=object$parameters$radius.type, 
                      radius=radius, 
                      the.grid=object$parameters$the.grid)
-
+    
     winners <- c(winners.cols, winners.rows)
   } else if (object$parameters$type=="numeric") { ## numeric
     if (is.null(x.new)) {
@@ -825,8 +923,10 @@ predict.somRes <- function(object, x.new=NULL, ..., radius=0,
                               radius.type=object$parameters$radius.type,
                               radius=radius, 
                               the.grid=object$parameters$the.grid)
-
+    
     } else if (object$parameters$type=="relational") { ## relational
+      if (object$parameters$scaling == "cosine") 
+        stop("'predict' is not implemented for cosine datasets")
       if (is.null(x.new)) {
         x.new <- object$data
       } else {
@@ -836,16 +936,14 @@ predict.somRes <- function(object, x.new=NULL, ..., radius=0,
         # check data dimension
         if (ncol(x.new)!=ncol(object$data))
           stop("Number of columns of x.new does not correspond to number of 
-             columns of the original data")
+               columns of the original data")
       }
-      
       norm.x.new <- switch(object$parameters$scaling,
                            "none"=x.new,
                            "frobenius"=x.new/sqrt(sum(object$data^2)),
                            "max"=x.new/max(abs(object$data)), 
                            "sd"=x.new/
-                             sd(object$data[upper.tri(object$data, diag=FALSE)]),
-                           "cosine"=cosinePreprocess(object$data, x.new))
+                             sd(object$data[upper.tri(object$data, diag=FALSE)]))
       norm.x.data <- preprocessData(object$data, object$parameters$scaling)
       norm.proto <- preprocessProto(object$prototypes, object$parameters$scaling,
                                     object$data)
@@ -856,10 +954,11 @@ predict.somRes <- function(object, x.new=NULL, ..., radius=0,
                                 radius.type=object$parameters$radius.type,
                                 radius=radius, 
                                 the.grid=object$parameters$the.grid)
+        
     }
   return(winners)
 }
-  
+
 protoDist.somRes <- function(object, mode=c("complete","neighbors"), ...) {
   mode <- match.arg(mode)
   complete <- (mode=="complete")
@@ -879,10 +978,10 @@ protoDist <- function(object, mode,...) {
 }
 
 projectIGraph.somRes <- function(object, init.graph, ...) {
-  if (!is.igraph(init.graph)) {
+  if (!is_igraph(init.graph)) {
     stop("'init.graph' must be an igraph object\n", call.=TRUE)
   }
-  if (vcount(init.graph)!=length(object$clustering)) {
+  if (gorder(init.graph)!=length(object$clustering)) {
     stop("The number of vertexes of 'init.graph' does not match the clustering length\n", call.=TRUE)
   }
   proj.graph <- projectGraph(init.graph, object$clustering,
