@@ -18,9 +18,14 @@ h=NULL, \ldots)
 \method{summary}{somSC}(object, \ldots)
 \method{projectIGraph}{somSC}(object, init.graph, \ldots)
 \method{plot}{somSC}(x, type=c("dendrogram", "grid", "hitmap", "lines", 
-               "barplot", "boxplot", "mds", "color", "poly.dist", "pie",
-               "graph", "dendro3d", "radar", "projgraph"),
-     plot.var=TRUE, plot.legend=FALSE, add.type=FALSE, \ldots)
+                                 "barplot", "boxplot", "mds", "color", 
+                                 "poly.dist", "pie", "graph", "dendro3d", 
+                                 "radar", "projgraph"),
+                       plot.var=TRUE, plot.legend=FALSE, add.type=FALSE, 
+                       print.title = FALSE, 
+                       the.titles = paste("Cluster", 
+                                          1:prod(x$som$parameters$the.grid$dim)),
+                       ...)
 }
 
 \arguments{
@@ -53,6 +58,12 @@ h=NULL, \ldots)
   indicating whether you are giving an additional variable to the argument 
   \code{variable} or not. If you do, the function \code{\link{plot.somRes}} 
   will be called with the argument \code{what} set to \code{"add"}.}
+  \item{print.title}{Whether the cluster titles must be printed in center of
+  the grid or not for \code{type="grid"}. Default to \code{FALSE} (titles not 
+  displayed).}
+  \item{the.titles}{If \code{print.title = TRUE}, values of the title to 
+  display for \code{type="grid"}. Default to "Cluster " followed by the cluster
+  number.}
   \item{\ldots}{Used for \code{plot.somSC}: further arguments passed either to
   the function \code{\link{plot}} (case \code{type="dendro"}) or to 
   \code{\link{plot.myGrid}} (case \code{type="grid"}) or to 
@@ -104,12 +115,12 @@ equivalently, to the vertexes of the graph).
 }
 
 \references{
-Anderson, M. J. (2001). A new method for non-parametric multivariate analysis of
-variance. \emph{Austral Ecology}, \strong{26}, 32--46.
+Anderson M.J. (2001). A new method for non-parametric multivariate analysis of
+variance. \emph{Austral Ecology}, \strong{26}, 32-46.
 
-Olteanu, M., Villa-Vialaneix, N. (2015) Using SOMbrero for clustering and 
-visualizing graphs. \emph{Journal de la Societe Francaise de Statistique}.
-\emph{Under revision}.
+Olteanu M., Villa-Vialaneix N. (2015) Using SOMbrero for clustering and 
+visualizing graphs. \emph{Journal de la Societe Francaise de Statistique}, 
+\strong{156}, 95-119.
 }
 
 \value{The \code{superClass} function returns an object of class 
@@ -132,10 +143,8 @@ corresponding cluster;
 sum of the weights) between the vertexes of the two corresponding clusters.}
 }
 
-\author{Laura Bendhaiba \email{laurabendhaiba@gmail.com}\cr
-Julien Boelaert \email{julien.boelaert@gmail.com}\cr
-Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
-Nathalie Villa-Vialaneix \email{nathalie.villa@toulouse.inra.fr}
+\author{Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
+Nathalie Villa-Vialaneix \email{nathalie.villa-vialaneix@inra.fr}
 }
 
 \seealso{\code{\link{hclust}}, \code{\link{cutree}}, \code{\link{trainSOM}}, 

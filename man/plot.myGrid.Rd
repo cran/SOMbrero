@@ -8,7 +8,8 @@ Draw a \code{myGrid} class object
 Draw a grid corresponding to a \code{myGrid} class object in a graphical window.
 }
 \usage{
-\method{plot}{myGrid}(x, neuron.col="white", \dots)
+\method{plot}{myGrid}(x, neuron.col = "white", print.title = FALSE, 
+                      the.titles = paste("Cluster", 1:prod(x$dim)), \dots)
 }
 \arguments{
   \item{x}{The \code{myGrid} class object to be drawn.}
@@ -16,15 +17,18 @@ Draw a grid corresponding to a \code{myGrid} class object in a graphical window.
   \code{white}. If the argument is composed of one single color, neurons will 
   all be filled with the same color. If the argument is composed of many colors, 
   the number of colors must match the total number of neurons.}
+  \item{print.title}{Whether the cluster titles must be printed in center of
+  the grid or not. Default to \code{FALSE} (titles not displayed).}
+  \item{the.titles}{If \code{print.title = TRUE}, values of the title to 
+  display. Default to "Cluster " followed by the cluster number.}
   \item{\dots}{Further arguments to the \code{\link{plot}} function.}
 }
 \details{
 Color filling process uses the coordinates of the object \code{x}, having class
 \code{myGrid} and included in \code{x$coord}.
 }
-\author{Laura Bendhaiba \email{laurabendhaiba@gmail.com}\cr
-Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
-Nathalie Villa-Vialaneix \email{nathalie.villa@toulouse.inra.fr}
+\author{Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
+Nathalie Villa-Vialaneix \email{nathalie.villa-vialaneix@inra.fr}
 }
 \seealso{\code{\link{initGrid}} to define a \code{myGrid} class object.}
 \examples{

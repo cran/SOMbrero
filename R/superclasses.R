@@ -115,6 +115,9 @@ plot.somSC <- function(x, type=c("dendrogram", "grid", "hitmap", "lines",
                                  "poly.dist", "pie", "graph", "dendro3d", 
                                  "radar", "projgraph"),
                        plot.var=TRUE, plot.legend=FALSE, add.type=FALSE, 
+                       print.title = FALSE, 
+                       the.titles = paste("Cluster", 
+                                          1:prod(x$som$parameters$the.grid$dim)),
                        ...) {
   # TODO: add types "names" and "words"
   args <- list(...)
@@ -135,13 +138,28 @@ plot.somSC <- function(x, type=c("dendrogram", "grid", "hitmap", "lines",
       do.call("plot", args)
     } else do.call("plot", args)
     if (length(x)>2) {
-      rect.hclust(x$tree, k=max(x$cluster))
+      if ((!is.null(args$col))&(length(args$col)==max(x$cluster))) {
+        clust.col.pal <- args$col
+        clust.col <- args$col[x$cluster]
+      } else {
+        if (!is.null(args$col))
+          warning("Incorrect number of colors
+                  (does not fit the number of super-clusters);
+                  using the default palette.\n", call.=TRUE, immediate.=TRUE)
+        # create a color vector from RColorBrewer palette
+        clust.col.pal <- brewer.pal(max(x$cluster), "Set2")
+        clust.col <- clust.col.pal[x$cluster]
+      }
+      rect.hclust(x$tree, k = max(x$cluster), cluster = x$cluster,
+                  border = clust.col.pal[unique(x$cluster[x$tree$order])])
+      legend("topright", col = clust.col.pal, pch = 19, 
+             legend = paste("SC", 1:max(x$cluster)), cex = 0.7)
     } else warning("Impossible to plot the rectangles: no super clusters.\n",
                    call.=TRUE, immediate.=TRUE)
     par(mfrow=c(1,1), oma=c(0,0,0,0), mar=c(5, 4, 4, 2)+0.1)
   } else  if (type=="dendro3d") {
     if (length(x)==3) {
-      if ((!is.null(args$col))&(length(args$col)=max(x$cluster))) {
+      if ((!is.null(args$col))&(length(args$col)==max(x$cluster))) {
         clust.col.pal <- args$col
         clust.col <- args$col[x$cluster]
       } else {
@@ -179,7 +197,7 @@ plot.somSC <- function(x, type=c("dendrogram", "grid", "hitmap", "lines",
     if (length(x)<3) {
       stop("No super clusters: plot unavailable.\n")
     } else {
-      if ((!is.null(args$col)) & (length(args$col)=max(x$cluster))) {
+      if ((!is.null(args$col)) & (length(args$col)==max(x$cluster))) {
         clust.col.pal <- args$col
         clust.col <- args$col[x$cluster]
       } else {
@@ -200,6 +218,8 @@ plot.somSC <- function(x, type=c("dendrogram", "grid", "hitmap", "lines",
         }
         args$x <- x$som$parameters$the.grid
         args$neuron.col <- clust.col
+        args$print.title <- print.title
+        args$the.titles <- the.titles
         do.call("plot.myGrid", args)
         par(mfrow=c(1,1), oma=c(0,0,0,0), mar=c(5, 4, 4, 2)+0.1)
       } else if (type %in% c("hitmap", "lines", "barplot", "boxplot", "mds",
@@ -238,16 +258,21 @@ plot.somSC <- function(x, type=c("dendrogram", "grid", "hitmap", "lines",
           }
         }
         if (plot.legend) {
-          layout(matrix(c(2,2,1),ncol=3))
-          plot.new()
-          legend(x="center", legend=paste("Super cluster", 1:max(x$cluster)), 
-                 col=clust.col.pal, pch=19)
-          if (type%in%c("lines","barplot","boxplot","color","pie", "poly.dist", 
-                        "radar"))
-            warning("Impossible to plot the legend with type '",type,"'.\n",
-                    call.=TRUE, immediate.=TRUE)
+          if (type%in%c("lines", "barplot", "boxplot", "color", "pie", 
+                        "poly.dist", "radar")) {
+            warning("Impossible to plot the legend with type '", type, "'.\n",
+                    call. = TRUE, immediate. = TRUE)
+          } else {
+            layout(matrix(c(2, 2, 1), ncol = 3))
+            plot.new()
+            legend(x = "center", 
+                   legend = paste("Super cluster", 1:max(x$cluster)), 
+                   col = clust.col.pal, pch = 19)
+          }
         }
         args$x <- x$som
+        
+        # manage argument 'what'
         if (!add.type) {
           if (type %in% c("hitmap", "boxplot")) {
             args$what <- "obs"
@@ -257,11 +282,20 @@ plot.somSC <- function(x, type=c("dendrogram", "grid", "hitmap", "lines",
         } else args$what <- "add"
         args$type <- type
         if (type=="boxplot") args$border <- clust.col
-        args$the.titles <- paste("SC",x$cluster)
-        if (type%in%c("pie", "radar")) {
+        
+        # manage titles
+        args$print.title <- print.title
+        if (!print.title | type %in% c("pie", "radar")) {
+          args$the.titles <- paste("SC", x$cluster)
+        } else {
+          args$the.titles <- the.titles
+        }
+        if (type %in% c("pie", "radar")) {
           args$print.title <- TRUE
-        } else if (type%in%c("color", "poly.dist")) args$print.title <- FALSE
+        } else if (type %in% c("color", "poly.dist")) args$print.title <- FALSE
        do.call("plot.somRes", args)
+       
+       # special features for 'color' and 'polydist' and 'projgraph'
        if (type=="color") 
          text(x=x$som$parameters$the.grid$coord[,1], 
               y=x$som$parameters$the.grid$coord[,2],
@@ -289,7 +323,7 @@ plot.somSC <- function(x, type=c("dendrogram", "grid", "hitmap", "lines",
         }
         
         # colors
-        if ((!is.null(args$col)) & (length(args$col)=max(x$cluster))) {
+        if ((!is.null(args$col)) & (length(args$col)==max(x$cluster))) {
           args$vertex.color <- args$col
           args$vertex.frame.color <- args$col
         } else {

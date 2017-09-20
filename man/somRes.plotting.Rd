@@ -176,9 +176,8 @@ are summarized in the following list:
 }
 }
 
-\author{Laura Bendhaiba \email{laurabendhaiba@gmail.com}\cr
-Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
-Nathalie Villa-Vialaneix \email{nathalie.villa@toulouse.inra.fr}
+\author{Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
+Nathalie Villa-Vialaneix \email{nathalie.villa-vialaneix@inra.fr}
 }
 
 \examples{

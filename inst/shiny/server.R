@@ -157,7 +157,7 @@ shinyServer(function(input, output, session) {
     if (ncol(d.input)>input$ncol.preview) 
       d.input <- d.input[,1:input$ncol.preview]
     head(d.input, n=input$nrow.preview) 
-  })
+  }, rownames = TRUE)
 
   #### Panel 'Self-organize'
   #############################################################################
@@ -239,6 +239,17 @@ shinyServer(function(input, output, session) {
         som.export <- server.env$current.som
         save(som.export, file=file)
       })
+  }
+  output$clustering.download <- {
+    downloadHandler(filename = function() {
+      paste0("clustering", format(Sys.time(), format="-%Y-%m-%d_%H:%M"),
+             ".txt")
+    },
+    content = function(file) {
+      som.export <- data.frame("name" = names(server.env$current.som$clustering),
+                               "cluster" = server.env$current.som$clustering)
+      write.table(som.export, file = file, row.names = FALSE, sep = "\t")
+    })
   }
   
   #### Panel 'Plot'
@@ -368,8 +379,11 @@ shinyServer(function(input, output, session) {
     if(input$superclassbutton ==0)
       return(NULL)
 
-    if (input$scplottype %in% c("grid", "dendrogram"))
+    if (input$scplottype == "dendrogram")
       return(plot(the.sc, type=input$scplottype))
+    if (input$scplottype == "grid")
+      return(plot(the.sc, type = input$scplottype, plot.legend = TRUE,
+                  print.titles = TRUE))
 
     tmp.view <- NULL
     if (input$somtype =="korresp")
@@ -385,8 +399,8 @@ shinyServer(function(input, output, session) {
                                                 input$scplotvar2]
       } else tmp.var <- input$scplotvar
       
-      plot(x=the.sc, what=input$scplotwhat, type=input$scplottype,
-           variable=tmp.var, view=tmp.view)
+      plot(x = the.sc, what = input$scplotwhat, type = input$scplottype,
+           variable = tmp.var, view = tmp.view, plot.legend = TRUE)
     }
   })
 
@@ -410,6 +424,8 @@ shinyServer(function(input, output, session) {
       the.table <- read.table(in.file$datapath, header=input$header2, 
                               sep=the.sep, quote=the.quote, row.names=1,
                               dec=the.dec)
+      som.export <- data.frame("name" = names(server.env$current.som$clustering),
+                               "cluster" = server.env$current.som$clustering)
     } else the.table <- read.table(in.file$datapath, header=input$header2, 
                                    sep=the.sep, quote=the.quote, dec=the.dec)
     

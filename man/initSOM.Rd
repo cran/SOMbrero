@@ -96,10 +96,8 @@ The \code{initSOM} function returns an object of class \code{paramSOM} which is
 a list of the parameters passed to the \code{initSOM} function, plus the default
 parameters for the ones not specified by the user.
 }
-\author{Laura Bendhaiba \email{laurabendhaiba@gmail.com}\cr
-Julien Boelaert \email{julien.boelaert@gmail.com}\cr
-Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
-Nathalie Villa-Vialaneix \email{nathalie.villa@toulouse.inra.fr}
+\author{Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
+Nathalie Villa-Vialaneix \email{nathalie.villa-vialaneix@inra.fr}
 }
 \references{
 Ben-Hur A., Weston J. (2010) A user's guide to support vector machine. In:
@@ -111,11 +109,11 @@ Maps}, Oja E., Kaski S. (Eds.), Elsevier, 303-315.
 Lee J., Verleysen M. (2007) \emph{Nonlinear Dimensionality Reduction}.
 Information Science and Statistics series, Springer.
 
-Letremy, P. (2005) Programmes bases sur l'algorithme de Kohonen et dedies a
+Letremy P. (2005) Programmes bases sur l'algorithme de Kohonen et dedies a
 l'analyse des donnees. SAS/IML programs for 'korresp'.
-\url{http://samos.univ-paris1.fr/Programmes-bases-sur-l-algorithme}.
+\url{http://samm.univ-paris1.fr/Programmes-SAS-de-cartes-auto}.
 
-Rossi, F. (2013) yasomi: Yet Another Self-Organising Map Implementation. R 
+Rossi F. (2013) yasomi: Yet Another Self-Organising Map Implementation. R 
 package, version 0.3. \url{https://github.com/fabrice-rossi/yasomi}
 }
 \seealso{

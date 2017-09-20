@@ -37,14 +37,13 @@ of the Self-Organizing Map structure,}
 \item{dim}{Same values as the arguments given to \code{initGrid} function.}
 \item{dist.type}{Same value as the arguments given to \code{initGrid} function.}
 }
-\author{Laura Bendhaiba \email{laurabendhaiba@gmail.com}\cr
-Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
-Nathalie Villa-Vialaneix \email{nathalie.villa@toulouse.inra.fr}
+\author{Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
+Nathalie Villa-Vialaneix \email{nathalie.villa-vialaneix@inra.fr}
 }
 \references{
-Letremy, P. (2005) Programmes bases sur l'algorithme de Kohonen et dedies a
+Letremy P. (2005) Programmes bases sur l'algorithme de Kohonen et dedies a
 l'analyse des donnees. SAS/IML programs for 'korresp'.
-\url{http://samos.univ-paris1.fr/Programmes-bases-sur-l-algorithme}.
+\url{http://samm.univ-paris1.fr/Programmes-SAS-de-cartes-auto}.
 }
 \seealso{See \code{\link{plot.myGrid}} for plotting a \code{myGrid} class object
 in a graphical window.}
