@@ -7,7 +7,7 @@
 the result of a SOM algorithm.}
 \usage{
 \method{quality}{somRes}(sommap,
-        quality.type=c("all", "quantization", "topographic"), \ldots)
+        quality.type=c("all", "quantization", "topographic"), ...)
 }
 
 \arguments{
@@ -17,7 +17,7 @@ the result of a SOM algorithm.}
   \code{quantization} and \code{topographic}. The output of the function is
   one those or both of them using the option \code{"all"}. Default value is the
   latter.}
-  \item{\ldots}{Not used.}
+  \item{...}{Not used.}
 }
 
 \value{The \code{quality} function returns either a numeric value (if only one 
@@ -33,7 +33,7 @@ is not in the direct neighborhood of the best matching unit.
 }
 
 \author{Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
-Nathalie Villa-Vialaneix \email{nathalie.villa-vialaneix@inra.fr}
+Nathalie Vialaneix \email{nathalie.vialaneix@inra.fr}
 }
 
 \references{

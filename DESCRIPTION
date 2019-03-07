@@ -1,14 +1,14 @@
 Package: SOMbrero
 Title: SOM Bound to Realize Euclidean and Relational Outputs
-Version: 1.2-3
-Date: 2018-02-05
-Authors@R: c(person("Nathalie", "Villa-Vialaneix", role = c("aut", "cre"), email="nathalie.villa-vialaneix@inra.fr"),
+Version: 1.2-4
+Date: 2019-03-07
+Authors@R: c(person("Nathalie", "Vialaneix", role = c("aut", "cre"), email="nathalie.vialaneix@inra.fr"),
              person("Jerome", "Mariette", role= "aut", email="jerome.mariette@inra.fr"),
              person("Madalina", "Olteanu", role = "aut", email="madalina.olteanu@univ-paris1.fr"),
              person("Fabrice", "Rossi", role = "aut", email="fabrice.rossi@univ-paris1.fr"),
              person("Laura", "Bendhaiba", role = "ctb", email="laurabendhaiba@gmail.com"),
              person("Julien", "Boelaert", role= "ctb", email="julien.boelaert@gmail.com"))
-Maintainer: Nathalie Villa-Vialaneix <nathalie.villa-vialaneix@inra.fr>
+Maintainer: Nathalie Vialaneix <nathalie.vialaneix@inra.fr>
 Description: The stochastic (also called on-line) version of the Self-Organising
              Map (SOM) algorithm is provided. Different versions of the
              algorithm are implemented, for numeric and relational data and for
@@ -26,12 +26,13 @@ Suggests: testthat, rmarkdown, knitr
 License: GPL (>= 2)
 Repository: CRAN
 VignetteBuilder: knitr
+RoxygenNote: 6.1.1
 NeedsCompilation: no
-Packaged: 2018-02-05 18:39:49 UTC; nathalie
-Author: Nathalie Villa-Vialaneix [aut, cre],
+Packaged: 2019-03-07 16:18:07 UTC; nathalie
+Author: Nathalie Vialaneix [aut, cre],
   Jerome Mariette [aut],
   Madalina Olteanu [aut],
   Fabrice Rossi [aut],
   Laura Bendhaiba [ctb],
   Julien Boelaert [ctb]
-Date/Publication: 2018-02-05 18:52:51 UTC
+Date/Publication: 2019-03-07 17:32:51 UTC

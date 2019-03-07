@@ -22,8 +22,8 @@ initSOM(dimension=c(5,5), topo=c("square"),
                           "korresp"="random"),
         scaling=switch(type, "numeric"="unitvar", "relational"="none",
                        "korresp"="chi2"), eps0=1)
-\method{print}{paramSOM}(x, \ldots)
-\method{summary}{paramSOM}(object, \ldots)
+\method{print}{paramSOM}(x, ...)
+\method{summary}{paramSOM}(object, ...)
 }
 \arguments{
   \item{dimension}{Vector of two integer points corresponding to the x 
@@ -89,7 +89,7 @@ initSOM(dimension=c(5,5), topo=c("square"),
   \eqn{t}{t} is the current step number and \eqn{\textrm{dim}}{dim} is the grid
   dimension (width multiplied by height).}
   \item{x, object}{an object of class \code{paramSOM}.}
-  \item{\ldots}{not used}
+  \item{...}{not used}
 }
 \value{
 The \code{initSOM} function returns an object of class \code{paramSOM} which is
@@ -97,7 +97,7 @@ a list of the parameters passed to the \code{initSOM} function, plus the default
 parameters for the ones not specified by the user.
 }
 \author{Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
-Nathalie Villa-Vialaneix \email{nathalie.villa-vialaneix@inra.fr}
+Nathalie Vialaneix \email{nathalie.vialaneix@inra.fr}
 }
 \references{
 Ben-Hur A., Weston J. (2010) A user's guide to support vector machine. In:

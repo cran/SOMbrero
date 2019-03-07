@@ -14,8 +14,8 @@ points.
 initGrid(dimension=c(5,5), topo=c("square"), 
          dist.type=c("euclidean", "maximum", "manhattan", "canberra", "binary",
                      "minkowski", "letremy"))
-\method{print}{myGrid}(x, \ldots)
-\method{summary}{myGrid}(object, \ldots)
+\method{print}{myGrid}(x, ...)
+\method{summary}{myGrid}(object, ...)
 }
 \arguments{
   \item{dimension}{Vector of two integer points corresponding to the x 
@@ -26,7 +26,7 @@ initGrid(dimension=c(5,5), topo=c("square"),
   \code{euclidean}. Type 'letremy' corresponds to the original implementation by 
   Patrick Letremy.}
   \item{x, object}{an object of class \code{myGrid}}
-  \item{\ldots}{not used}
+  \item{...}{not used}
 }
 \value{
 \code{initGrid} function returns an object of class \code{myGrid}, including 
@@ -38,7 +38,7 @@ of the Self-Organizing Map structure,}
 \item{dist.type}{Same value as the arguments given to \code{initGrid} function.}
 }
 \author{Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
-Nathalie Villa-Vialaneix \email{nathalie.villa-vialaneix@inra.fr}
+Nathalie Vialaneix \email{nathalie.vialaneix@inra.fr}
 }
 \references{
 Letremy P. (2005) Programmes bases sur l'algorithme de Kohonen et dedies a

@@ -1,10 +1,12 @@
+---
+title: "Self-Organizing Map for dissimilarity matrices"
+---
+
 <!--
 %\VignetteEngine{knitr}
 %\VignetteIndexEntry{SOM for dissimilarity data}
 %\VignettePackage{SOMbrero}
 -->
-
-# Self-Organizing Map for dissimilarity matrices
 
 ## Basic package description
 

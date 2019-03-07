@@ -5,6 +5,5 @@ utils
 grDevices
 graphics
 stats
-knitr
 igraph
 SOMbrero

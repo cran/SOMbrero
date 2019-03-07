@@ -1,10 +1,12 @@
+---
+title: "Self-Organizing Map for contingency tables"
+---
+
 <!--
 %\VignetteEngine{knitr}
 %\VignetteIndexEntry{SOM for contingency tables}
 %\VignettePackage{SOMbrero}
 -->
-
-# Self-Organizing Map for contingency tables
 
 ## Basic package description
 

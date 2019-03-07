@@ -11,9 +11,9 @@ The \code{trainSOM} function returns a \code{somRes} class object which
 contains the outputs of the algorithm.
 }
 \usage{
-trainSOM(x.data, \ldots)
-\method{print}{somRes}(x, \ldots)
-\method{summary}{somRes}(object, \ldots)
+trainSOM(x.data, ...)
+\method{print}{somRes}(x, ...)
+\method{summary}{somRes}(object, ...)
 }
 
 \arguments{
@@ -96,7 +96,7 @@ i6doc, Bruges, Belgium, 269-274.
 \author{Jerome Mariette \email{jerome.mariette@inra.fr}\cr
 Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
 Fabrice Rossi \email{fabrice.rossi@univ-paris1.fr}\cr
-Nathalie Villa-Vialaneix \email{nathalie.villa-vialaneix@inra.fr}
+Nathalie Vialaneix \email{nathalie.vialaneix@inra.fr}
 }
 
 \note{Warning! Recording intermediate backups with the argument \code{nb.save}

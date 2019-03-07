@@ -11,14 +11,14 @@ Compute distances between prototypes
 (\code{mode="neighbors")}.}
 
 \usage{
-\method{protoDist}{somRes}(object, mode=c("complete","neighbors"), \ldots)
+\method{protoDist}{somRes}(object, mode=c("complete","neighbors"), ...)
 }
 
 
 \arguments{
   \item{object}{a \code{somRes} object.}
   \item{mode}{Specifies which distances should be computed.}
-  \item{\ldots}{Not used.}
+  \item{...}{Not used.}
 }
 \details{
 When \code{mode="complete"}, distances between all prototypes are computed. 
@@ -40,7 +40,7 @@ number of neighbors. Neurons are considered to have 8 neighbors at most
 }
 
 \author{Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
-Nathalie Villa-Vialaneix \email{nathalie.villa-vialaneix@inra.fr}
+Nathalie Vialaneix \email{nathalie.vialaneix@inra.fr}
 }
 
 \seealso{\code{\link{trainSOM}}}

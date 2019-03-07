@@ -10,7 +10,7 @@ Compute the projection of a graph on a grid
 \code{\link[igraph]{igraph}} object, on the grid of the \code{somRes} object.}
 
 \usage{
-\method{projectIGraph}{somRes}(object, init.graph, \ldots)
+\method{projectIGraph}{somRes}(object, init.graph, ...)
 }
 
 
@@ -18,7 +18,7 @@ Compute the projection of a graph on a grid
   \item{object}{a \code{somRes} object.}
   \item{init.graph}{an \link[igraph]{igraph} whose number of vertices is equal
   to the clustering length of the \code{somRes} object.}
-  \item{\ldots}{Not used.}
+  \item{...}{Not used.}
 }
 
 \value{
@@ -40,7 +40,7 @@ sum of the weights) between the vertexes of the two corresponding clusters.}
 }
 
 \author{Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
-Nathalie Villa-Vialaneix \email{nathalie.villa-vialaneix@inra.fr}
+Nathalie Vialaneix \email{nathalie.vialaneix@inra.fr}
 }
 
 \references{

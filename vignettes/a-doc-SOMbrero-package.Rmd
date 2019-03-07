@@ -1,10 +1,12 @@
+---
+title: "SOMbrero Package description"
+---
+
 <!--
 %\VignetteEngine{knitr}
 %\VignetteIndexEntry{SOMbrero package}
 %\VignettePackage{SOMbrero}
 -->
-
-# SOMbrero package
 
 ![logo](./sombrero.png)
 
