@@ -12,7 +12,8 @@
 #' \url{http://www.mozilla.org/fr/firefox/new/}. In case Firefox is not your 
 #' default browser, copy/paste http://localhost:8100 into the URL bar.
 #' 
-#' @author Julien Boelaert \email{julien.boelaert@gmail.com}\cr
+#' @author Élise Maigné <elise.maigne@inrae.fr>\cr
+#' Julien Boelaert \email{julien.boelaert@gmail.com}\cr
 #' Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
 #' Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}
 #' 
@@ -27,5 +28,15 @@
 #' version 0.7.0. \url{https://cran.r-project.org/package=shiny}
 
 sombreroGUI <- function() {
-  shiny::runApp(system.file('shiny', package='SOMbrero'))
+  
+  if (all(requireNamespace("shinycssloaders", quietly = TRUE),
+          requireNamespace("shinyBS", quietly = TRUE), 
+          requireNamespace("shinyjs", quietly = TRUE), 
+          requireNamespace("shinyjqui", quietly = TRUE))) {
+    shiny::runApp(system.file('shiny', package = 'SOMbrero'))
+  } else {
+    stop("The packages 'shinycssloaders', 'shinyBS', 'shinyjs' and 'shinyjqui' are required to launch the graphical interface.",
+         call. = TRUE)
+  }
+  
 }

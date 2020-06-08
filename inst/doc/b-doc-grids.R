@@ -1,20 +1,27 @@
 ## ----loading, results='hide', echo=FALSE, warning=FALSE, message=FALSE----
-library(SOMbrero)
+library("SOMbrero")
 
-## ------------------------------------------------------------------------
-my.first.grid <- initGrid(dimension=c(5,6), topo="square", dist.type="maximum")
+## ----initGird------------------------------------------------------------
+first_grid <- initGrid(dimension = c(5,6), topo = "square", dist.type = "maximum")
 
 ## ----plotFirstGrid-------------------------------------------------------
-print(my.first.grid)
+print(first_grid)
 
-## ------------------------------------------------------------------------
-summary(my.first.grid)
+## ----summaryMyGrid-------------------------------------------------------
+summary(first_grid)
 
 ## ----plotRainbowGrid-----------------------------------------------------
-# plot without any color specification: squares are filled in white color
-plot(my.first.grid)
+plot(first_grid)
+plot(first_grid) + ggplot2::scale_fill_manual(values = rep("white", 30))
+my_palette <- colorRampPalette(c("white", "pink", "purple"))(30)
+plot(first_grid, show.names = FALSE) + 
+  ggplot2::scale_fill_manual(values = my_palette)
 
-# generating colors from the rainbow() function
-my.colors <- rainbow(5*6)
-plot(my.first.grid, neuron.col=my.colors)
+## ----plotHexa------------------------------------------------------------
+second_grid <- initGrid(dimension = c(4, 5), topo = "hexagonal")
+plot(second_grid, names = paste0("N", 1:20)) + 
+  ggplot2::ggtitle("Hexagonal SOM grid")
+
+## ----sessionInfo---------------------------------------------------------
+sessionInfo()
 

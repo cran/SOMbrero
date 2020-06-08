@@ -1,7 +1,7 @@
 Package: SOMbrero
 Title: SOM Bound to Realize Euclidean and Relational Outputs
-Version: 1.2-5
-Date: 2020-03-04
+Version: 1.3
+Date: 2020-06-08
 Authors@R: c(person("Nathalie", "Vialaneix", role = c("aut", "cre"), email="nathalie.vialaneix@inrae.fr"),
              person("Elise", "Maigne", role = "aut", email="elise.maigne@inrae.fr"),
              person("Jerome", "Mariette", role= "aut", email="jerome.mariette@inrae.fr"),
@@ -21,16 +21,17 @@ Description: The stochastic (also called on-line) version of the Self-Organising
              graphical user interface based on 'shiny'.
 BugReports: http://github.com/tuxette/sombrero/issues
 Depends: R (>= 3.1.0), igraph (>= 1.0)
-Imports: wordcloud, scatterplot3d, RColorBrewer, shiny, grDevices,
-        graphics, stats
-Suggests: testthat, rmarkdown, knitr
+Imports: scatterplot3d, shiny, grDevices, graphics, stats, ggplot2,
+        ggwordcloud, metR, interp
+Suggests: testthat, rmarkdown, knitr, hexbin, shinycssloaders, shinyBS,
+        shinyjs, shinyjqui
 License: GPL (>= 2)
 Repository: CRAN
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 NeedsCompilation: no
-Packaged: 2020-03-05 11:02:50 UTC; nathalie
+Packaged: 2020-06-08 13:53:38 UTC; nathalie
 Author: Nathalie Vialaneix [aut, cre],
   Elise Maigne [aut],
   Jerome Mariette [aut],
@@ -38,4 +39,4 @@ Author: Nathalie Vialaneix [aut, cre],
   Fabrice Rossi [aut],
   Laura Bendhaiba [ctb],
   Julien Boelaert [ctb]
-Date/Publication: 2020-03-05 12:20:08 UTC
+Date/Publication: 2020-06-08 15:00:19 UTC

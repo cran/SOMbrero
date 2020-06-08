@@ -9,7 +9,7 @@
 #' @description This package implements the stochastic (also called on-line) 
 #' Self-Organizing Map (SOM) algorithms for numeric and relational data.
 #' 
-#' It is based on a grid (see \code{\link{initGrid}}) which is part of the 
+#' It is based on a grid (see \code{\link{initGrid}}), which is part of the 
 #' parameters given to the algorithm (see \code{\link{initSOM}} and 
 #' \code{\link{trainSOM}}). Many graphs can help you with the results (see 
 #' \code{\link{plot.somRes}}).
@@ -17,8 +17,8 @@
 #' @details \tabular{ll}{
 #' Package: \tab SOMbrero\cr
 #' Type: \tab Package\cr
-#' Version: \tab 1.2-5\cr
-#' Date: \tab 2020-03-04\cr
+#' Version: \tab 1.3\cr
+#' Date: \tab 2020-06-08\cr
 #' License: \tab GPL (>= 2)
 #' }
 #' 
@@ -34,9 +34,12 @@
 #' on representing graphs, as described in Olteanu and Villa-Vialaneix, 2015b.
 #' 
 #' @author Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}\cr
+#' Élise Maigné <elise.maigne@inrae.fr>\cr
 #' Jérome Mariette \email{jerome.mariette@inrae.fr}\cr
 #' Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
-#' Fabrice Rossi \email{fabrice.rossi@apiacoa.org}\cr \cr
+#' Fabrice Rossi \email{fabrice.rossi@apiacoa.org}\cr
+#' Laura Bendhaiba \email{laurabendhaiba@gmail.com}\cr
+#' Julien Boelaert \email{julien.boelaert@gmail.com}\cr \cr
 #' Maintainer: Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}
 #' 
 #' @references 
@@ -79,15 +82,17 @@
 #' \code{\link{plot.somRes}} and \code{\link{sombreroGUI}}.
 #' 
 #' @import igraph
-#' @import RColorBrewer
-#' @import shiny
-#' 
-#' @importFrom grDevices cm.colors heat.colors rainbow
-#' @importFrom graphics abline box layout legend par plot plot.new polygon rect
-#' @importFrom graphics text title
+#' @import ggplot2
+#' @importFrom grDevices trans3d hcl
+#' @importFrom graphics layout legend par plot rect text title points
 #' @importFrom stats aov as.dist chisq.test cmdscale cutree dist hclust pf
-#' @importFrom stats princomp quantile rect.hclust runif sd
+#' @importFrom stats princomp quantile rect.hclust runif sd aggregate median
+#' @importFrom stats reshape var
 #' @importFrom scatterplot3d scatterplot3d
-#' @importFrom wordcloud wordcloud
+#' @importFrom ggwordcloud geom_text_wordcloud
+#' @importFrom metR geom_contour_fill	
+#' @importFrom interp interp
+#' @importFrom utils packageVersion
+
 
 NULL

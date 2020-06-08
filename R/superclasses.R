@@ -3,15 +3,16 @@
 ############################### subfunctions ##################################
 dendro3dProcess <- function(v.ind, ind, tree, coord, mat.moy, scatter) {
   ## TODO check (and probably fix) heights
-  if (tree$merge[ind,v.ind]<0) {
-    res <- coord[abs(tree$merge[ind,v.ind]),]
-    scatter$points3d(matrix(c(res,0,res,tree$height[ind]), 
-                        ncol=3, byrow=TRUE), type="l")
+  if (tree$merge[ind, v.ind] < 0) {
+    res <- coord[abs(tree$merge[ind, v.ind]), ]
+    scatter$points3d(matrix(c(res, 0, res,tree$height[ind]), ncol = 3, 
+                            byrow = TRUE),
+                     type = "l")
   } else {
-    res <- mat.moy[tree$merge[ind,v.ind],]
-    scatter$points3d(matrix(c(res,tree$height[tree$merge[ind,v.ind]],
-                          res,tree$height[ind]), ncol=3, 
-                        byrow=TRUE), type="l")
+    res <- mat.moy[tree$merge[ind, v.ind], ]
+    scatter$points3d(matrix(c(res, tree$height[tree$merge[ind, v.ind]],
+                              res, tree$height[ind]), ncol = 3, byrow = TRUE), 
+                     type = "l")
   }
   return(res)
 }
@@ -20,7 +21,6 @@ dendro3dProcess <- function(v.ind, ind, tree, coord, mat.moy, scatter) {
 #' @title Create super-clusters from SOM results
 #' @name superClass
 #' @export
-#' @exportClass somSC
 #' 
 #' @aliases superClass.somRes
 #' @aliases print.somSC
@@ -47,6 +47,13 @@ dendro3dProcess <- function(v.ind, ind, tree, coord, mat.moy, scatter) {
 #' SOM (case \code{"korresp"} is not handled by this function). In the projected
 #' graph, the vertices are positionned at the center of gravity of the 
 #' super-clusters (more details in the section \strong{Details} below).
+#' @param what What you want to plot for superClass object. Either the 
+#' observations (\code{obs}), the prototypes (\code{prototypes}) or an 
+#' additional variable (\code{add}), or \code{NULL} if not appropriate. 
+#' Automatically set for types "hitmap" (to \code{"obs"}), 'grid' 
+#' (to \code{"prototypes"}), default to "obs" otherwise.
+#' If \code{what='add'}, the function \code{\link{plot.somRes}} will be called with
+#' the argument \code{what} set to \code{"add"}.
 #' @param type The type of plot to draw. Default value is \code{"dendrogram"}, 
 #' to plot the dendrogram of the clustering. Case \code{"grid"} plots the grid 
 #' in color according to the super clustering. Case \code{"projgraph"} uses an
@@ -57,17 +64,10 @@ dendro3dProcess <- function(v.ind, ind, tree, coord, mat.moy, scatter) {
 #' @param plot.var A boolean indicating whether a graph showing the evolution of
 #' the explained variance should be plotted. This argument is only used when 
 #' \code{type="dendrogram"}, its default value is \code{TRUE}.
-#' @param plot.legend A boolean indicating whether a legend should be added to 
-#' the plot. This argument is only used when \code{type} is either \code{"grid"} 
-#' or \code{"hitmap"} or \code{"mds"}. Its default value is \code{FALSE}.
-#' @param add.type A boolean, which default value is \code{FALSE}, indicating 
-#' whether you are giving an additional variable to the argument \code{variable}
-#' or not. If you do, the function \code{\link{plot.somRes}} will be called with
-#' the argument \code{what} set to \code{"add"}.
-#' @param print.title Whether the cluster titles must be printed in center of
+#' @param show.names Whether the cluster titles must be printed in center of
 #' the grid or not for \code{type="grid"}. Default to \code{FALSE} (titles not 
 #' displayed).
-#' @param the.titles If \code{print.title = TRUE}, values of the title to 
+#' @param names If \code{show.names = TRUE}, values of the title to 
 #' display for \code{type="grid"}. Default to "Cluster " followed by the cluster
 #' number.
 #' @param \dots Used for \code{plot.somSC}: further arguments passed either to
@@ -97,21 +97,22 @@ dendro3dProcess <- function(v.ind, ind, tree, coord, mat.moy, scatter) {
 #' On plots, the different super classes are identified in the following ways:
 #' \itemize{
 #'   \item either with different color, when \code{type} is set among: 
-#'   \code{"grid"} (*, #), \code{"hitmap"} (*, #), \code{"lines"} (*, #), 
-#'   \code{"barplot"} (*, #), \code{"boxplot"}, \code{"mds"} (*, #), 
-#'   \code{"dendro3d"} (*, #), \code{"graph"} (*, #)
-#'   \item or with title, when \code{type} is set among: \code{"color"} (*),
-#'   \code{"poly.dist"} (*, #), \code{"pie"} (#), \code{"radar"} (#)
+#'   \code{"grid"} (N, K, R), \code{"hitmap"} (N, K, R), \code{"lines"} (N, K, R), 
+#'   \code{"barplot"} (N, K, R), \code{"boxplot"}, \code{"poly.dist"} (N, K, R), 
+#'   \code{"mds"} (N, K, R), \code{"dendro3d"} (N, K, R), \code{"graph"} (R),
+#'   \code{"projgraph"} (R)
+#'   \item or with title, when \code{type} is set among: \code{"color"} (N, K),
+#'   \code{"pie"} (N, R)
 #' }
-#' In the list above, the charts available for a \code{korresp} SOM are marked 
-#' with a * whereas those available for a \code{relational} SOM are marked with 
-#' a #.
 #' 
-#' \code{projectIGraph.somSC} produces a projected graph from the 
+#' In the list above, the charts available for a \code{numerical} SOM are maked
+#' with a N, with a K for a \code{korresp} SOM and with a R for \code{relational} SOM.
+#' 
+#' \code{\link{projectIGraph.somSC}} produces a projected graph from the 
 #' \link[igraph]{igraph} object passed to the argument \code{variable} as 
 #' described in (Olteanu and Villa-Vialaneix, 2015). The attributes of this 
 #' graph are the same than the ones obtained from the SOM map itself in the 
-#' function \code{\link{projectIGraph.somRes}}. \code{plot.somSC} used with 
+#' function \code{\link{projectIGraph.somRes}}. \code{\link{plot.somSC}} used with 
 #' \code{type="projgraph"} calculates this graph and represents it by 
 #' positionning the super-vertexes at the center of gravity of the 
 #' super-clusters. This feature can be combined with \code{pie.graph=TRUE} to 
@@ -149,7 +150,8 @@ dendro3dProcess <- function(v.ind, ind, tree, coord, mat.moy, scatter) {
 #'   clusters.
 #' }
 #' 
-#' @author Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
+#' @author Élise Maigné <elise.maigne@inrae.fr>\cr
+#' Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
 #' Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}
 #' 
 #' @seealso \code{\link{hclust}}, \code{\link{cutree}}, \code{\link{trainSOM}}, 
@@ -157,37 +159,43 @@ dendro3dProcess <- function(v.ind, ind, tree, coord, mat.moy, scatter) {
 #' 
 #' @examples 
 #' set.seed(11051729)
-#' my.som <- trainSOM(x.data=iris[,1:4])
+#' my.som <- trainSOM(x.data = iris[,1:4])
 #' # choose the number of super-clusters
 #' sc <- superClass(my.som)
 #' plot(sc)
 #' # cut the clustering
-#' sc <- superClass(my.som, k=4)
+#' sc <- superClass(my.som, k = 4)
 #' summary(sc)
 #' plot(sc)
-#' plot(sc, type="hitmap", plot.legend=TRUE)
+#' plot(sc, type = "grid")
+#' plot(sc, what = "obs", type = "hitmap")
 
-superClass <- function(sommap, method, members, k, h,...) {
+superClass <- function(sommap, method, members, k, h, ...) {
   UseMethod("superClass")
 }
 
 #' @export
 
-superClass.somRes <- function(sommap, method="ward.D", members=NULL, k=NULL,
-                              h=NULL, ...) {
-  if (sommap$parameters$type=="relational") {
-    the.distances <- protoDist(sommap, "complete")
-    if (sum(the.distances<0)>0) {
-      stop("Impossible to make super clustering!", call.=TRUE)
-    } else the.distances <- as.dist(the.distances)
+superClass.somRes <- function(sommap, method = "ward.D", members = NULL, 
+                              k = NULL, h = NULL, ...) {
+  if (method == "ward.D2") {
+    warning("'method=ward.D2' should not be used with this function because the current code implements the computation of squared distances.", 
+            call. = TRUE)
   }
-  else the.distances <- as.dist(protoDist(sommap, "complete")^2)
+  
+  if (sommap$parameters$type == "relational") {
+    the.distances <- protoDist(sommap, "complete")
+    if (sum(the.distances<0) > 0) {
+      stop("Impossible to make super clustering!", call. = TRUE)
+    } else the.distances <- as.dist(the.distances)
+  } else the.distances <- as.dist(protoDist(sommap, "complete")^2)
+  
   hc <- hclust(the.distances, method, members)
   if (!is.null(k) || !is.null(h)) {
     sc <- cutree(hc, k, h)
-    res <- list("cluster"=as.numeric(sc), "tree"=hc, "som"=sommap)
+    res <- list("cluster" = as.numeric(sc), "tree" = hc, "som" = sommap)
   } else {
-    res <- list("tree"=hc, "som"=sommap)
+    res <- list("tree" = hc, "som" = sommap)
   }
   class(res) <- "somSC"
   return(res)
@@ -200,16 +208,17 @@ print.somSC <- function(x, ...) {
   cat("\n   SOM Super Classes\n")
   cat("     Initial number of clusters : ", prod(x$som$parameters$the.grid$dim),
       "\n")
-  if (length(x)>2) {
+  if (length(x) > 2) {
     cat("     Number of super clusters   : ", length(unique(x$cluster)), "\n\n")
   } else cat("     Number of super clusters not chosen yet.\n\n")
 }
 
+#' @method summary somSC
 #' @export
 #' @rdname superClass
 summary.somSC <- function(object, ...) {
   print(object)
-  if (length(object)>2) {
+  if (length(object) > 2) {
     cat("\n  Frequency table")
     print(table(object$cluster))
     cat("\n  Clustering\n")
@@ -217,53 +226,54 @@ summary.somSC <- function(object, ...) {
     names(output.clustering) <- seq_along(object$cluster)
     print(output.clustering)
     cat("\n")
-  
-    if (object$som$parameters$type=="numeric") {
+    
+    if (object$som$parameters$type == "numeric") {
       sc.clustering <- object$cluster[object$som$clustering]
       cat("\n  ANOVA\n")
       res.anova <- as.data.frame(t(sapply(1:ncol(object$som$data), function(ind) {
-        res.aov <- summary(aov(object$som$data[,ind]~as.factor(sc.clustering)))
-        c(round(res.aov[[1]][1,4],digits=3), round(res.aov[[1]][1,5],digits=8))
+        res.aov <- summary(aov(object$som$data[ ,ind] ~ as.factor(sc.clustering)))
+        c(round(res.aov[[1]][1,4], digits = 3), 
+          round(res.aov[[1]][1,5], digits = 8))
       })))
       names(res.anova) <- c("F", "pvalue")
-      res.anova$significativity <- rep("",ncol(object$som$data))
-      res.anova$significativity[res.anova$"pvalue"<0.05] <- "*"
-      res.anova$significativity[res.anova$"pvalue"<0.01] <- "**"
-      res.anova$significativity[res.anova$"pvalue"<0.001] <- "***"
+      res.anova$significativity <- rep("", ncol(object$som$data))
+      res.anova$significativity[res.anova$"pvalue" < 0.05] <- "*"
+      res.anova$significativity[res.anova$"pvalue" < 0.01] <- "**"
+      res.anova$significativity[res.anova$"pvalue" < 0.001] <- "***"
       rownames(res.anova) <- colnames(object$som$data)
       
       cat("\n        Degrees of freedom : ", 
-          summary(aov(object$som$data[,1]~as.factor(sc.clustering)))[[1]][1,1],
+          summary(aov(object$som$data[ ,1] ~ as.factor(sc.clustering)))[[1]][1,1],
           "\n\n")
       print(res.anova)
       cat("\n")
-    } else if (object$som$parameters$type=="relational") {
-      if (object$som$parameters$scaling=="cosine") {
+    } else if (object$som$parameters$type == "relational") {
+      if (object$som$parameters$scaling == "cosine") {
         norm.data <- preprocessData(object$som$data, object$parameters$scaling)
       } else norm.data <- object$som$data
-      sse.total <- sum(norm.data)/(2*nrow(norm.data))
+      sse.total <- sum(norm.data) / (2 * nrow(norm.data))
       
       sc.clustering <- object$cluster[object$som$clustering]
       
       sse.within <- sum(sapply(unique(sc.clustering), function(clust)
-        sum(norm.data[sc.clustering==clust,sc.clustering==clust])/
-          (2*sum(sc.clustering==clust))))
+        sum(norm.data[sc.clustering == clust,sc.clustering==clust]) /
+          (2 * sum(sc.clustering == clust))))
       
       n.clusters <- length(unique(sc.clustering))
-      F.stat <- ((sse.total-sse.within)/sse.within) * 
-        ((nrow(norm.data)-n.clusters)/(n.clusters-1))
+      F.stat <- ((sse.total - sse.within)/sse.within) * 
+        ((nrow(norm.data) - n.clusters) / (n.clusters - 1))
       
-      p.value <- 1-pf(F.stat, n.clusters-1, nrow(norm.data)-n.clusters)
+      p.value <- 1 - pf(F.stat, n.clusters - 1, nrow(norm.data) - n.clusters)
       sig <- ""
-      if (p.value<0.001) {
+      if (p.value < 0.001) {
         sig <- "***"
-      } else if (p.value<0.1) {
+      } else if (p.value < 0.1) {
         sig <- "**"
-      } else if (p.value<0.05) sig <- "*"
+      } else if (p.value < 0.05) sig <- "*"
       
       cat("\n  ANOVA\n")
       cat("         F                       : ", F.stat, "\n")
-      cat("         Degrees of freedom      : ", n.clusters-1, "\n")
+      cat("         Degrees of freedom      : ", n.clusters - 1, "\n")
       cat("         p-value                 : ", p.value, "\n")
       cat("                 significativity : ", sig, "\n")
     }
@@ -272,137 +282,178 @@ summary.somSC <- function(object, ...) {
 
 #' @export
 #' @rdname superClass
-plot.somSC <- function(x, type=c("dendrogram", "grid", "hitmap", "lines", 
-                                 "barplot", "boxplot", "mds", "color", 
-                                 "poly.dist", "pie", "graph", "dendro3d", 
-                                 "radar", "projgraph"),
-                       plot.var=TRUE, plot.legend=FALSE, add.type=FALSE, 
-                       print.title = FALSE, 
-                       the.titles = paste("Cluster", 
-                                          1:prod(x$som$parameters$the.grid$dim)),
+plot.somSC <- function(x, what = c("obs", "prototypes", "add"), 
+                       type = c("dendrogram", "grid", "hitmap", "lines", 
+                                "meanline", "barplot", "boxplot", "mds", 
+                                "color", "poly.dist", "pie", "graph", 
+                                "dendro3d", "projgraph"),
+                       plot.var = TRUE,  show.names = TRUE, 
+                       names = 1:prod(x$som$parameters$the.grid$dim),
                        ...) {
   # TODO: add types "names" and "words"
   args <- list(...)
-  type <- match.arg(type)
-
-  if (type=="dendrogram") {
-    args$x <- x$tree
-    if (is.null(args$xlab)) args$xlab <- ""
-    if (is.null(args$ylab)) args$ylab <- ""
-    if (is.null(args$sub)) args$sub <- ""
-    if (is.null(args$main)) args$main <- "Super-clusters dendrogram"
-    if ((x$tree$method=="ward")&(plot.var)) {
-      layout(matrix(c(2,2,1),ncol=3))
-      Rsq <- cumsum(x$tree$height/sum(x$tree$height))
-      plot(length(x$tree$height):1, Rsq, type="b", pch="+",
-           xlab="Number of clusters", ylab="proportion of unexplained variance",
-           main="Proportion of variance\n not explained by\n super-clusters")
-      do.call("plot", args)
-    } else do.call("plot", args)
-    if (length(x)>2) {
-      if ((!is.null(args$col))&(length(args$col)==max(x$cluster))) {
-        clust.col.pal <- args$col
-        clust.col <- args$col[x$cluster]
+  type <- type[1]
+  
+  calls <- names(sapply(match.call(), deparse))[-1]
+  if (any("print.title" %in% calls)) {
+    warning("'print.title' will be deprecated, please use 'show.names' instead",
+            call. = FALSE, immediate. = TRUE)
+    show.names <- args$print.title
+  }
+  if (any("the.titles" %in% calls)) {
+    warning("'the.titles' will be deprecated, please use 'names' instead", 
+            call. = FALSE, immediate. = TRUE)
+    names <- args$the.titles
+  }
+  if (any("add.type" %in% calls)) {
+    warning("'add.type' will be deprecated, please use `what='add'` instead", 
+            call. = FALSE, immediate. = TRUE)
+    what <- "add"
+  }
+  
+  if (!(type %in% c("dendrogram", "dendro3d", "grid"))) {
+    args$what <- match.arg(what)
+    # Type control (if not in dendro, dendro3d)
+    authorizedtypes <-
+      list("numeric" = list("obs" = c("hitmap", "lines", "meanline", "barplot",
+                                      "boxplot","color"),
+                            "prototypes" = c("grid", "lines", 
+                                             "barplot", "mds", "color", 
+                                             "poly.dist"),
+                            "add" = c("lines", "meanline", "barplot", "boxplot",
+                                      "color", "pie", "graph", "projgraph")),
+           "korresp" = list("obs" = c("hitmap"),
+                            "prototypes" = c("grid", "lines", 
+                                             "barplot", "mds", "color", 
+                                             "poly.dist"),
+                            "add" = NULL),
+           "relational" = list("obs" = c("hitmap"),
+                               "prototypes" = c("grid", "lines", 
+                                                "barplot", "mds", "poly.dist"),
+                               "add" = c("lines", "meanline", "barplot", "pie",
+                                         "graph", "projgraph"))
+      )
+    
+    if (!is.element(type, authorizedtypes[[x$som$parameters$type]][[args$what]])) {
+      namedwhat <- switch (args$what,
+                           "obs" = "observations",
+                           "prototypes" = "prototypes",
+                           "add" = "additional variables"
+      )
+      if (args$what == "add" && x$som$parameters$type == "korresp") {
+        stop(paste0("Incorrect type. For ", x$som$parameters$type,
+                    " super classes, plots for ", namedwhat, 
+                    " are not authorized"), call. = TRUE)
       } else {
-        if (!is.null(args$col))
-          warning("Incorrect number of colors
+        stop(paste0("Incorrect type. For ", x$som$parameters$type,
+                    " super classes, plots for ", namedwhat, " can be '",
+                    paste(authorizedtypes[[x$som$parameters$type]][[args$what]],
+                          collapse="', '"),
+                    "'"), call. = TRUE)
+      }
+    }
+  }
+  
+  # Colors (used only for dendrogram, dendro3d, graph and projgraph)
+  if (!is.null(x$cluster)) {
+    nbclust <- max(x$cluster)
+    if ((!is.null(args$col)) & (length(args$col) == nbclust)) {
+      clust.col.pal <- args$col
+    } else {
+      if (!is.null(args$col))
+        warning("Incorrect number of colors
                   (does not fit the number of super-clusters);
                   using the default palette.\n", call.=TRUE, immediate.=TRUE)
-        # create a color vector from RColorBrewer palette
-        clust.col.pal <- brewer.pal(max(x$cluster), "Set2")
-        clust.col <- clust.col.pal[x$cluster]
-      }
+      clust.col.pal <- gg_color(nbclust)
+    }
+    clust.col <- clust.col.pal[x$cluster]
+  } else {
+    nbclust <- 1
+  }
+  
+  if (type == "dendrogram") {
+    args$x <- x$tree
+    if (is.null(args$main)) args$main <- "Super-clusters dendrogram"
+    if ((x$tree$method == "ward.D") & (plot.var)) {
+      layout(matrix(c(2, 2, 1), ncol = 3))
+      Rsq <- cumsum(x$tree$height / sum(x$tree$height))
+      plot(length(x$tree$height):1, Rsq, type = "b", pch = "+",
+           xlab = "Number of clusters", 
+           ylab = "proportion of unexplained variance",
+           main = "Proportion of variance\n not explained by\n super-clusters")
+      do.call("plot", args)
+    } else  {
+      do.call("plot", args)
+    }
+    if (length(x) > 2) {
       rect.hclust(x$tree, k = max(x$cluster), cluster = x$cluster,
                   border = clust.col.pal[unique(x$cluster[x$tree$order])])
       legend("topright", col = clust.col.pal, pch = 19, 
-             legend = paste("SC", 1:max(x$cluster)), cex = 0.7)
+             legend = paste("SC", 1:nbclust), cex = 1)
     } else warning("Impossible to plot the rectangles: no super clusters.\n",
-                   call.=TRUE, immediate.=TRUE)
-    par(mfrow=c(1,1), oma=c(0,0,0,0), mar=c(5, 4, 4, 2)+0.1)
-  } else  if (type=="dendro3d") {
-    if (length(x)==3) {
-      if ((!is.null(args$col))&(length(args$col)==max(x$cluster))) {
-        clust.col.pal <- args$col
-        clust.col <- args$col[x$cluster]
-      } else {
-        if (!is.null(args$col))
-          warning("Incorrect number of colors
-                  (does not fit the number of super-clusters);
-                  using the default palette.\n", call.=TRUE, immediate.=TRUE)
-        # create a color vector from RColorBrewer palette
-        clust.col.pal <- brewer.pal(max(x$cluster), "Set2")
-        clust.col <- clust.col.pal[x$cluster]
-      }
-    } else clust.col <- rep("black",prod(x$som$parameters$the.grid$dim))
-    # FIX IT! maybe some more code improvements...  
-    x.y.coord <- x$som$parameters$the.grid$coord+0.5
-    if (floor(max(x$tree$height[-which.max(x$tree$height)]))==0) {
+                   call. = TRUE, immediate. = TRUE)
+    layout(1)
+    
+  } else if (type == "dendro3d") {
+    if (length(x) < 3) {
+      clust.col <- "black"
+    } 
+    x.y.coord <- x$som$parameters$the.grid$coord + 0.5
+    if (floor(max(x$tree$height[-which.max(x$tree$height)])) == 0) {
       z.max <- max(x$tree$height[-which.max(x$tree$height)])
     } else {
       z.max <- ceiling(max(x$tree$height[-which.max(x$tree$height)]))
     }
-    spt <- scatterplot3d(x=x.y.coord[,1], y=x.y.coord[,2], 
-                         z=rep(0,prod(x$som$parameters$the.grid$dim)), 
-                         zlim=c(0, z.max), 
-                         pch=19, color=clust.col, xlab="x", ylab="y",  
-                         zlab="", x.ticklabs="", y.ticklabs="")
-    horiz.ticks <- matrix(NA, nrow=prod(x$som$parameters$the.grid$dim)-1, ncol=2)
-    for (neuron in 1:(prod(x$som$parameters$the.grid$dim)-1)) {
-      vert.ticks <- sapply(1:2, dendro3dProcess, ind=neuron, tree=x$tree, 
-                           coord=x.y.coord, mat.moy=horiz.ticks, scatter=spt)
-      horiz.ticks[neuron,] <- rowMeans(vert.ticks)
-      spt$points3d(matrix(c(vert.ticks[,1], x$tree$height[neuron],
-                            vert.ticks[,2], x$tree$height[neuron]), ncol=3,
-                          byrow=TRUE), type="l")
+    if (is.null(args$angle)) args$angle <- 40
+    posleg <- "bottomright"
+    if (args$angle > 80) posleg <- "topright"
+    spt <- scatterplot3d(x = x.y.coord[,1], y = x.y.coord[,2], 
+                         z = rep(0,prod(x$som$parameters$the.grid$dim)), 
+                         xlim = c(min(x.y.coord[ ,1]) - 0.5, 
+                                  max(x.y.coord[ ,1]) + 0.5), 
+                         ylim = c(min(x.y.coord[ ,2]) - 0.5, 
+                                  max(x.y.coord[ ,2]) + 0.5),
+                         zlim = c(0, z.max), angle = args$angle, pch = 19, 
+                         color = clust.col, xlab = "x", ylab = "y", zlab = "", 
+                         x.ticklabs = "", y.ticklabs = "")
+    if (length(x) > 2) {
+      legend(posleg, col = clust.col.pal, pch = 19, 
+             legend = paste("SC", 1:nbclust), cex = 1)
+    }
+    horiz.ticks <- matrix(NA, nrow = prod(x$som$parameters$the.grid$dim) - 1,
+                          ncol = 2)
+    for (neuron in 1:(prod(x$som$parameters$the.grid$dim) - 1)) {
+      vert.ticks <- sapply(1:2, dendro3dProcess, ind = neuron, tree = x$tree, 
+                           coord = x.y.coord, mat.moy = horiz.ticks, 
+                           scatter = spt)
+      horiz.ticks[neuron, ] <- rowMeans(vert.ticks)
+      spt$points3d(matrix(c(vert.ticks[ ,1], x$tree$height[neuron],
+                            vert.ticks[ ,2], x$tree$height[neuron]), ncol = 3,
+                          byrow = TRUE), 
+                   type = "l")
     }
   } else {
-    if (length(x)<3) {
+    if (length(x) < 3) {
       stop("No super clusters: plot unavailable.\n")
     } else {
-      if ((!is.null(args$col)) & (length(args$col)==max(x$cluster))) {
-        clust.col.pal <- args$col
-        clust.col <- args$col[x$cluster]
-      } else {
-        if (!is.null(args$col))
-          warning("Incorrect number of colors
-                  (does not fit the number of super-clusters);
-                  using the default palette.\n", call.=TRUE, immediate.=TRUE)
-        # create a color vector from RColorBrewer palette
-        clust.col.pal <- brewer.pal(max(x$cluster), "Set2")
-        clust.col <- clust.col.pal[x$cluster]
-      }
-      if (type=="grid") {
-        if (plot.legend) {
-          layout(matrix(c(2,2,1),ncol=3))
-          plot.new()
-          legend(x="center", legend=paste("Super cluster", 1:max(x$cluster)), 
-                 col=clust.col.pal, pch=19)
-        }
-        args$x <- x$som$parameters$the.grid
-        args$neuron.col <- clust.col
-        args$print.title <- print.title
-        args$the.titles <- the.titles
-        do.call("plot.myGrid", args)
-        par(mfrow=c(1,1), oma=c(0,0,0,0), mar=c(5, 4, 4, 2)+0.1)
-      } else if (type %in% c("hitmap", "lines", "barplot", "boxplot", "mds",
-                             "color", "poly.dist", "pie", "graph", "radar")) {
-        if ((x$som$parameters$type=="korresp") && 
-              (type %in% c("boxplot", "pie", "graph")))
-            stop(type, " plot is not available for 'korresp' super classes\n", 
-                 call.=TRUE)
-        if ((x$som$parameters$type=="relational") && 
-              (type %in% c("boxplot", "color")))
-          stop(type, " plot is not available for 'relational' super classes\n", 
-               call.=TRUE)
-          
-        if ((type%in%c("poly.dist", "radar"))&(plot.legend)) {
-          plot.legend <- FALSE
-          warning("Impossible to plot the legend with type '",type,"'.\n",
-                  call.=TRUE, immediate.=TRUE)
-        }
-        if (!(type%in%c("graph","pie", "radar"))) {
-          args$col <- clust.col
-        } else if (type=="graph") {
+      if (type == "grid") {
+        args$sc <- max(x$cluster)
+        ggplotGrid("prototypes", type = "grid", values = x$cluster, 
+                   clustering = as.numeric(as.character(rownames(x$som$prototypes))), 
+                   show.names = show.names, names=names, 
+                   the.grid = x$som$parameters$the.grid, args)
+        
+      } else if (type=="hitmap") {
+        args$sc <- max(x$cluster)
+        ggplotGrid("observations", type = "hitmap",  
+                   values = x$cluster[x$som$clustering], 
+                   clustering = x$som$clustering, 
+                   show.names = show.names, names = names, 
+                   the.grid = x$som$parameters$the.grid, args)
+        
+      } else if (type %in% c("lines", "meanline", "barplot", "boxplot", "mds",
+                             "color", "poly.dist", "pie", "graph")) {
+        if (type == "graph") {
           neclust <- which(!is.na(match(1:prod(x$som$parameters$the.grid$dim),
                                         unique(x$som$clustering))))
           if (is.null(args$pie.graph)) args$pie.graph <- FALSE
@@ -410,110 +461,72 @@ plot.somSC <- function(x, type=c("dendrogram", "grid", "hitmap", "lines",
             args$vertex.color <- clust.col[neclust]
             args$vertex.frame.color <- clust.col[neclust]
           } else {
-            if (plot.legend)
-              warning("Impossible to plot the legend with type '",type,"'.\n",
-                      call.=TRUE, immediate.=TRUE)
-            plot.legend <- FALSE
-            print.title <- TRUE
+            show.names <- TRUE
             args$vertex.label <- paste("SC",x$cluster[neclust])
             args$vertex.label.color <- "black"
           }
         }
-        if (plot.legend) {
-          if (type%in%c("lines", "barplot", "boxplot", "color", "pie", 
-                        "poly.dist", "radar")) {
-            warning("Impossible to plot the legend with type '", type, "'.\n",
-                    call. = TRUE, immediate. = TRUE)
-          } else {
-            layout(matrix(c(2, 2, 1), ncol = 3))
-            plot.new()
-            legend(x = "center", 
-                   legend = paste("Super cluster", 1:max(x$cluster)), 
-                   col = clust.col.pal, pch = 19)
-          }
-        }
         args$x <- x$som
-        
-        # manage argument 'what'
-        if (!add.type) {
-          if (type %in% c("hitmap", "boxplot")) {
-            args$what <- "obs"
-          } else if (type%in%c("graph", "pie")) {
-            args$what <- "add"
-          } else args$what <- "prototypes"
-        } else args$what <- "add"
         args$type <- type
-        if (type=="boxplot") args$border <- clust.col
         
         # manage titles
-        args$print.title <- print.title
-        if (!print.title | type %in% c("pie", "radar")) {
-          args$the.titles <- paste("SC", x$cluster)
+        args$show.names <- show.names
+        if (type %in% c("lines", "meanline", "barplot", "boxplot", "poly.dist")) {
+          args$names <- names
         } else {
-          args$the.titles <- the.titles
+          args$names <- paste("SC", x$cluster)
         }
-        if (type %in% c("pie", "radar")) {
-          args$print.title <- TRUE
-        } else if (type %in% c("color", "poly.dist")) args$print.title <- FALSE
-       do.call("plot.somRes", args)
-       
-       # special features for 'color' and 'polydist' and 'projgraph'
-       if (type=="color") 
-         text(x=x$som$parameters$the.grid$coord[,1], 
-              y=x$som$parameters$the.grid$coord[,2],
-              labels=paste("SC",x$cluster))
-       else if (type=="poly.dist")
-         text(x=x$som$parameters$the.grid$coord[,1]-0.1, 
-              y=x$som$parameters$the.grid$coord[,2]+0.1,
-              labels=paste("SC",x$cluster) )
-       par(mfrow=c(1,1), oma=c(0,0,0,0), mar=c(5, 4, 4, 2)+0.1)
-      } else if (type=="projgraph") {
+        
+        # manage colors 
+        if (args$what == "obs" | args$what == "add") {
+          args$varcolor <- x$cluster[x$som$clustering]
+          args$sc <- x$cluster[x$som$clustering] 
+        }
+        if (args$what == "prototypes") {
+          args$varcolor <- x$cluster
+          args$sc <-  x$cluster
+        }
+        
+        if (args$what == "add") {
+          if (is.null(args$variable)) {
+            stop("Specify the variable to plot", call. = TRUE)
+          }
+          callvar <- match.call(expand.dots = FALSE)$...[["variable"]]
+          args$varname <- deparse(substitute(callvar))
+        }
+        
+        do.call("plot.somRes", args)
+        
+      } else if (type == "projgraph") {
         # check arguments
-        if (x$som$parameters$type=="korresp")
-          stop(type, " plot is not available for 'korresp' super classes\n", 
-               call.=TRUE)
+        if (x$som$parameters$type == "korresp")
+          stop(type, " plot is not available for 'korresp' super classes\n",
+               call. = TRUE)
         if (is.null(args$variable)) {
-          stop("for type='projgraph', the argument 'variable' must be supplied (igraph object)\n", 
-               call.=TRUE)
+          stop("for type='projgraph', the argument 'variable' must be supplied (igraph object)\n",
+               call. = TRUE)
         }
-        if (!is.igraph(args$variable)){
-          stop("for type='projgraph', argument 'variable' must be an igraph object\n", 
-               call.=TRUE)
+        if (!is.igraph(args$variable)) {
+          stop("for type='projgraph', argument 'variable' must be an igraph object\n",
+               call. = TRUE)
         }
-        if (length(V(args$variable)) != nrow(x$som$data)){
-          stop("number of nodes in graph does not fit length of the original data", call.=TRUE)
-        }
-        
-        # colors
-        if ((!is.null(args$col)) & (length(args$col)==max(x$cluster))) {
-          args$vertex.color <- args$col
-          args$vertex.frame.color <- args$col
-        } else {
-          if (!is.null(args$col))
-            warning("Incorrect number of colors 
-  (does not fit the number of super-clusters);
-  using the default palette.\n", call.=TRUE, immediate.=TRUE)
-          # create a color vector from RColorBrewer palette
-          args$vertex.color <- brewer.pal(max(x$cluster), "Set2")
-          args$vertex.frame.color <- brewer.pal(max(x$cluster), "Set2")
+        if (length(V(args$variable)) != nrow(x$som$data)) {
+          stop("number of nodes in graph does not fit length of the original data", 
+               call. = TRUE)
         }
         
-        if (plot.legend) {
-          layout(matrix(c(2,2,1),ncol=3))
-          plot.new()
-          legend(x="center", legend=paste("Super cluster", 1:max(x$cluster)), 
-                 col=args$vertex.color, pch=19)
-        }
+        args$vertex.color <- clust.col.pal
+        args$vertex.frame.color <- clust.col.pal
         
         # case of pie
         if (is.null(args$pie.graph)) args$pie.graph <- FALSE
         if (args$pie.graph) {
-          if (is.null(args$pie.variable)) 
-            stop("pie.graph is TRUE, you must supply argument 'pie.variable'\n", 
-               call.=TRUE)
+          if (is.null(args$pie.variable))
+            stop("pie.graph is TRUE, you must supply argument 'pie.variable'\n",
+                 call.=TRUE)
           if (nrow(as.matrix(args$pie.variable)) != nrow(x$som$data)) {
-            stop("length of argument 'pie.variable' does not fit length of the 
-             original data", call.=TRUE)
+            stop("length of argument 'pie.variable' does not fit length of the original data",
+                 call.=TRUE)
           }
           args$vertex.shape <- "pie"
           if (is.null(args$vertex.pie.color)) args$vertex.pie.color <- NULL
@@ -539,19 +552,19 @@ plot.somSC <- function(x, type=c("dendrogram", "grid", "hitmap", "lines",
 #' @rdname superClass
 projectIGraph.somSC <- function(object, init.graph, ...) {
   if (length(object) <= 2) 
-    stop("The number of clusters has not been chosen yet. Cannot project the graph on super-clusters.\n", 
-         call.=TRUE)
-  if (object$som$parameters$type=="korresp")
+    stop("The number of clusters has not been chosen yet. Cannot project the graph on super-clusters.\n",
+         call. = TRUE)
+  if (object$som$parameters$type == "korresp")
     stop("projectIGraph is not available for 'korresp' super classes\n", 
-         call.=TRUE)
+         call. = TRUE)
   # project the graph into the SOM grid
   proj.graph <- projectIGraph.somRes(object$som, init.graph)
   # clustering of the non empty clusters
   induced.clustering <- object$cluster[as.numeric(V(proj.graph)$name)]
   # search for the positions (center of gravity) of the superclusters
   original.positions <- object$som$parameters$the.grid$coord
-  positions <- cbind(tapply(original.positions[,1], object$cluster, mean),
-                     tapply(original.positions[,2], object$cluster, mean))
+  positions <- cbind(tapply(original.positions[ ,1], object$cluster, mean),
+                     tapply(original.positions[ ,2], object$cluster, mean))
   
   proj.graph.sc <- projectGraph(proj.graph, induced.clustering, positions)
   

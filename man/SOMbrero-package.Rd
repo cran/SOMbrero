@@ -9,7 +9,7 @@
 This package implements the stochastic (also called on-line) 
 Self-Organizing Map (SOM) algorithms for numeric and relational data.
 
-It is based on a grid (see \code{\link{initGrid}}) which is part of the 
+It is based on a grid (see \code{\link{initGrid}}), which is part of the 
 parameters given to the algorithm (see \code{\link{initSOM}} and 
 \code{\link{trainSOM}}). Many graphs can help you with the results (see 
 \code{\link{plot.somRes}}).
@@ -18,8 +18,8 @@ parameters given to the algorithm (see \code{\link{initSOM}} and
 \tabular{ll}{
 Package: \tab SOMbrero\cr
 Type: \tab Package\cr
-Version: \tab 1.2-5\cr
-Date: \tab 2020-03-04\cr
+Version: \tab 1.3\cr
+Date: \tab 2020-06-08\cr
 License: \tab GPL (>= 2)
 }
 
@@ -76,8 +76,11 @@ IEEE, Nancy, France.
 }
 \author{
 Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}\cr
+Élise Maigné <elise.maigne@inrae.fr>\cr
 Jérome Mariette \email{jerome.mariette@inrae.fr}\cr
 Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
-Fabrice Rossi \email{fabrice.rossi@apiacoa.org}\cr \cr
+Fabrice Rossi \email{fabrice.rossi@apiacoa.org}\cr
+Laura Bendhaiba \email{laurabendhaiba@gmail.com}\cr
+Julien Boelaert \email{julien.boelaert@gmail.com}\cr \cr
 Maintainer: Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}
 }

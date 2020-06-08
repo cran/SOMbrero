@@ -1,5 +1,12 @@
 ---
 title: "Using Self-Organizing Maps with SOMbrero to cluster a numeric dataset"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    theme: journal
+    toc: yes
+    toc_float:
+      collapsed: no
 ---
 
 <!--
@@ -8,16 +15,29 @@ title: "Using Self-Organizing Maps with SOMbrero to cluster a numeric dataset"
 %\VignettePackage{SOMbrero}
 -->
 
+To limit this documentation size, most figures are not displayed in the version
+of the vignette included in the package. To see all figures, you can rerun
+the vignettes, changing the following option to `TRUE`:
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(include = FALSE)
+```
+
+Alternatively, this compilation is also available at:
+http://sombrero.nathalievialaneix.eu/articles/c-doc-numericSOM.html
+
+
 ## Basic package description
 
-To be able to run the SOM algorithm, you have to load the package called 
-```SOMbrero```. The function used to run it is called ```trainSOM()``` and is 
-detailed below.
+`SOMbrero` implements different variants of the Self-Organizing Map algorithm
+(also called Kohonen's algorithm). To run the standard version of the algorithm,
+use the function `trainSOM()` on a data frame or matrix with numerical columns.
+The standard numeric SOM and its use in `SOMbrero` are illustrated below.
 
 __This documentation only considers the case of numerical data.__
 
 ```{r loading, results='hide', echo=FALSE, warning=FALSE, message=FALSE}
-library(SOMbrero)
+library("ggplot2")
+library("SOMbrero")
 ```
 
 ### Arguments
@@ -25,7 +45,7 @@ library(SOMbrero)
 The ```trainSOM``` function has several arguments, but only the first one is
 required. This argument is ```x.data``` which is the dataset used to train the 
 SOM. In this documentation, it is passed to the function as a matrix or a data
-frame with numeric variables in columns and observations of these variables in
+frame with numerical variables in columns and observations of these variables in
 rows.
 
 The other arguments are the same as the arguments passed to the ```initSOM```
@@ -41,63 +61,60 @@ The ```trainSOM``` function returns an object of class ```somRes``` (see
 
 The following table indicates which graphics are available for a numeric SOM.
 
-Type        |   Energy  |   Obs |   Prototypes  |   Add   |   Super Cluster
-------------|:---------:|:-----:|:-------------:|:-------:|:----------------:
-no type     |   x       |       |               |         |
-hitmap      |           |   x   |               |         |         x
-color       |           |   x   |       x       |   x     |         x2
-lines       |           |   x   |       x       |   x     |         x2
-barplot     |           |   x   |       x       |   x     |         x2
-radar       |           |   x   |       x       |   x     |         x2
-pie         |           |       |               |   x     |         x
-boxplot     |           |   x   |               |   x     |         x2
-3d          |           |       |       x       |         |
-poly.dist   |           |       |       x       |         |         x
-umatrix     |           |       |       x       |         |
-smooth.dist |           |       |       x       |         |
-words       |           |       |               |   x     |
-names       |           |   x   |               |   x     |
-graph       |           |       |               |   x     |         x
-mds         |           |       |       x       |         |         x
-grid.dist   |           |       |       x       |         |         
-grid        |           |       |               |         |         x
-dendrogram  |           |       |               |         |         x
-dendro3d    |           |       |               |         |         x
+| What <br> <br> SOM or SC<br>Type | SOM<br>Energy  <br> <br> <br>| Obs  <br> <br> <br> <br>| Prototypes  <br> <br> <br> <br>| Add  <br> <br> <br> <br>| SuperCluster<br>(no what) <br> <br> <br> | Obs <br> <br> <br> <br> | Prototypes <br> <br> <br> <br> | Add <br> <br> <br> <br> |
+|:------------|:--------|:-----|:------------|:-----|:-------------|:-----|:------------|:-----|
+| (no type)   | x       |      |             |      |              |      |             |      |
+| hitmap      |         | x    |             |      |              | x    |             |      |
+| color       |         | x    | x           | x    |              | x    | x           |      |
+| lines       |         | x    | x           | x    |              | x    | x           | x    |
+| meanline    |         | x    |             | x    |              | x    |             | x    |
+| barplot     |         | x    | x           | x    |              | x    | x           | x    |
+| pie         |         |      |             | x    |              |      |             | x    |
+| boxplot     |         | x    |             | x    |              | x    |             | x    |
+| 3d          |         |      | x           |      |              |      |             |      |
+| poly.dist   |         |      | x           |      |              |      | x           |      |
+| umatrix     |         |      | x           |      |              |      |             |      |
+| smooth.dist |         |      | x           |      |              |      |             |      |
+| mds         |         |      | x           |      |              |      | x           |      |
+| grid.dist   |         |      | x           |      |              |      |             |      |
+| words       |         |      |             | x    |              |      |             |      |
+| names       |         | x    |             | x    |              |      |             |      |
+| grid        |         |      |             |      |              |      | x           |      |
+| dendrogram  |         |      |             |      | x            |      |             |      |
+| dendro3d    |         |      |             |      | x            |      |             |      |
 
-The plots marked by "x2", in the "Super Cluster" column, are available for 
-both data set variables and additional variables. 
 
 ## First case study: simulated data in $[0,1]^2$
 
-The first case study show the clustering of points randomly distributed in the
+The first case study shows the clustering of points randomly distributed in the
 square $[0,1]^2$. The data are generated by:
 ```{r dataGeneration}
 set.seed(4031719)
-the.data <- data.frame("x1"=runif(500), "x2"=runif(500))
-plot(the.data, pch=19)
+the.data <- data.frame("x1" = runif(500), "x2" = runif(500))
+ggplot(the.data, aes(x = x1, y = x2)) + geom_point() + theme_bw()
 ```
 
 ### Training the SOM
+
 The numeric SOM algorithm is used to cluster the data:
 ```{r dataTrain}
-set.seed(593)
+set.seed(1105)
 # run the SOM algorithm with 10 intermediate backups and 2000 iterations
 my.som <- trainSOM(x.data=the.data, dimension=c(5,5), nb.save=10, maxit=2000, 
-                   scaling="none", radius.type="letremy")
+                   scaling="none", radius.type="letremy", topo="square",
+                   dist.type = "letremy")
 ```
 
 The energy evolves as described in the following graphic:
-```{r energy}
+```{r energy, include=TRUE}
 plot(my.som, what="energy")
 ```
-
-It is stabilized during the last 500 iterations.
 
 ### Clustering
 
 The resulting clustering distribution can be visualized by the hitmap:
-```{r hitmapObs}
-plot(my.som, what="obs", type="hitmap")
+```{r hitmapObs, fig.height=6, fig.width=6}
+plot(my.som, what = "obs", type = "hitmap")
 ```
 
 The observations are almost uniformly distributed on the map.
@@ -105,7 +122,7 @@ The observations are almost uniformly distributed on the map.
 The clustering component allows us to plot the initial data according to the 
 final clustering.
 
-```{r clusteredData, echo=FALSE, cache=TRUE}
+```{r clusteredData, include=TRUE, cache=TRUE}
 # prepare a vector of colors
 my.colors <- rainbow(prod(my.som$parameters$the.grid$dim))[my.som$clustering]
 
@@ -118,37 +135,35 @@ plot(my.som$data[,1], my.som$data[,2], col=my.colors, pch=19, xlab="x1",
 
 The values of the prototypes can be represented with the plot function and help
 interpret the clusters:
-```{r colorProto, fig.width=5, fig.height=2.5}
+```{r colorProto, fig.width=5, fig.height=2.5, include=TRUE}
 par(mfrow=c(1,2))
-plot(my.som, what="prototypes", type="color", var=1, main="prototypes - x1")
-plot(my.som, what="prototypes", type="color", var=2, main="prototypes - x2")
+plot(my.som, what="prototypes", type="color", var=1)
+plot(my.som, what="prototypes", type="color", var=2)
 ```
 
 Here, the interpretation is simple enough: high values of the first variables x1
-are located at the right side of the map and small values at the left side of 
-the map. Large values of x2 are located at the top of the map, whereas, small
-values are located at the bottom of the map.
+are located at the top of the map and small values at the bottom of the map. 
+Large values of x2 are located at the right hand side of the map, whereas, small
+values are located at the left hand side.
 
 We obtain the same results with a similar plot on the observation mean values:
 ```{r colorObs, fig.width=5, fig.height=2.5}
 par(mfrow=c(1,2))
-plot(my.som, what="obs", type="color", var=1, main="obs mean values - x1")
-plot(my.som, what="obs", type="color", var=2, main="obs mean values - x2")
+plot(my.som, what="obs", type="color", var=1)
+plot(my.som, what="obs", type="color", var=2)
 ```
 
 The prototypes coordinates are also registered for each intermediate backup so 
 they can be displayed on different graphics to see the evolution in the
 prototypes organization.
-```{r protoEvoluation, fig.width=15, fig.height=6, echo=FALSE}
-# find out the prototypes to be linked
-tra <- NULL
-for (i in c(1,6,11,16,21)){
-  tra <- c(tra, i, i+1, i+1, i+2, i+2, i+3, i+3, i+4)
-}
-for (i in c(1:5)){
-  tra <- c(tra, i, i+5, i+5, i+10, i+10, i+15, i+15, i+20)
-}
-tmp <- matrix(tra, ncol=2, byrow=TRUE)
+```{r protoEvoluation, fig.width=15, fig.height=6, include=TRUE, echo=FALSE}
+# Get the neighbours between prototypes
+values <- protoDist(my.som, "neighbors")
+tmp <- data.frame("prot1" = rep.int(1:prod(my.som$parameters$the.grid$dim), 
+                                    times=sapply(values, length)), 
+                  "nei" = as.numeric(as.character(names(unlist(values)))))
+tmp <- tmp[tmp[ ,1] < tmp[ ,2], ]
+
 # plot the prototypes
 par(mfrow=c(2, 5),mar=c(3,2,2,1))
 invisible(sapply(1:my.som$parameters$nb.save, function(ind){
@@ -176,18 +191,22 @@ each of 3 species of iris (setosa, versicolor, and virginica).
 
 ### Training the SOM
 
+__NB: In the following analysis, variables are centered and scaled to unit 
+variance, which is the default behavior of the algorithm.__
+
 The first four variables of the data set (that are the numeric variables) are 
 used to map each flower on the SOM grid.
-```{r irisTrain, cache=TRUE}
+```{r irisTrain, cache=TRUE, include=TRUE}
 set.seed(255)
 # run the SOM algorithm with verbose set to TRUE
-iris.som <- trainSOM(x.data=iris[,1:4], verbose=TRUE, nb.save=5)
+iris.som <- trainSOM(x.data = iris[,1:4], dimension = c(5,5), verbose = TRUE, 
+                     nb.save = 5, topo = "hexagonal")
 iris.som
 ```
 
 As the energy is registered during the intermediate backups, we can have a look
 at its evolution.
-```{r energyIris}
+```{r energyIris, include=TRUE}
 plot(iris.som, what="energy")
 ```
 
@@ -200,19 +219,19 @@ stepwise.
 
 The clustering component contains the final classification of the dataset. It is 
 a vector with length equal to the number of rows of the input dataset.
-```{r irisClusters}
+```{r irisClusters, include=TRUE}
 iris.som$clustering
 table(iris.som$clustering)
 ```
 which can also be visualized by a hitmap plot:
-```{r irisHitmap}
+```{r irisHitmap, include=TRUE}
 plot(iris.som, what="obs", type="hitmap")
 ```
 
-To access the relevance of each explanatory variable in the definition of the 
-clusters, the function ```summary``` includes an ANOVA with the factor being the
-clustering, for each (numeric) input variable.
-```{r irisSummary}
+To assess the relevance of each explanatory variable in the definition of the 
+clusters, the function ```summary``` includes an ANOVA with the predictor being
+the clustering, for each (numeric) input variable.
+```{r irisSummary, include=TRUE}
 summary(iris.som)
 ```
 Here, all variables have significantly different means among the different
@@ -221,9 +240,9 @@ definition.
 
 Another useful function is ```predict.somRes```. This function predicts the 
 neuron to which a new observation would be assigned. The first argument must be 
-a ```somRes``` object and the second one the new observation.
-Let us have a try on the first observation of the iris data set:
-```{r irisPred1}
+a ```somRes``` object and the second one the new observation. Let us have a try 
+on the first observation of the iris data set:
+```{r irisPred1, include=TRUE}
 # call predict.somRes
 predict(iris.som, iris[1,1:4])
 # check the result of the final clustering with the SOM algorithm
@@ -234,87 +253,87 @@ iris.som$clustering[1]
 
 #### Graphics common to observations and prototypes
 
-__NB: in all the following graphics, data are scaled in the preprocessing
-stage.__
+Some graphics are shared between observations and prototypes and can be used to
+display the prototypes' or the observations' values for the different variables 
+in the neurons of the map. For observations, the mean values are sometimes 
+displayed instead of the individual values.
 
-Some graphics are shared between observations and prototypes. They allow you 
-to plot the level values, either of the prototypes or of the observation means. 
-In this example these common graphics are plotted for the mean observation 
-values.
-
-```{r irisGraphOP}
-par(mfrow=c(2,2))
-plot(iris.som, what="obs", type="color", variable=1, print.title=TRUE, 
-     main="Sepal length")
-plot(iris.som, what="obs", type="color", variable=2, print.title=TRUE, 
-     main="Sepal width")
-plot(iris.som, what="obs", type="color", variable=3, print.title=TRUE, 
-     main="Petal length")
-plot(iris.som, what="obs", type="color", variable=4, print.title=TRUE, 
-     main="Petal width")
-plot(iris.som, what="prototypes", type="lines", print.title=TRUE)
-plot(iris.som, what="obs", type="barplot", print.title=TRUE)
-plot(iris.som, what="obs", type="radar", key.loc=c(-0.5,5), mar=c(0,10,2,0))
+```{r irisGraphOP, include=TRUE}
+par(mfrow = c(2,2))
+plot(iris.som, what = "obs", type = "color", variable = 1)
+plot(iris.som, what = "obs", type = "color", variable = 2)
+plot(iris.som, what = "obs", type = "color", variable = 3)
+plot(iris.som, what = "obs", type = "color", variable = 4)
 ```
 
-Empty squares catch the attention: none of the  observations are assigned to
-clusters 4, 9, 14 and 19.
+```{r irisGraphOP2}
+plot(iris.som, what = "prototypes", type = "lines", show.names = TRUE) + 
+  theme(axis.text.x = element_blank())
+plot(iris.som, what = "obs", type = "barplot", show.names = TRUE) + 
+  theme(axis.text.x = element_blank())
+```
 
-Let us analyse the results for cluster 5 more precisely. On the ```"color"```
-plots, cluster 5 has the following results: high values for
-```Sepal.Width``` and low values for all the other variables.
-These results are also noticeable in the other plots:
+Some neurons are empty (no observations affected to them): neurons 3, 7, 8, 9, 
+10, 13, 14, 15, 19, 20, 24. They are the illustration of a large difference 
+between observations classified in clusters 4-5 with the rest of the 
+observations (to some extend, the same can be said about observations in cluster
+25).
 
-* on the ```"lines"``` plot, the second point shows a peak;
-* on the ```"barplot"``` plot, this evolution is observed again;
-* on the ```"radar"``` plot, the slice corresponding to ```Sepal.Width``` is 
-very big whereas the two Petal slices are almost invisible.
+Clusters 4-5 are characterized by the following facts (visible on `"color"` 
+plots): larger values for `Sepal.Width`, smaller values for `Petal.Length` and
+`Petal.Width` and average values for `Sepal.Length`. Similar conclusions are 
+obtained from the `"lines"` and `"barplot"` plots. Please note that, for these
+two last plots, it is advised to display the neuron numbers (option 
+`show.names = TRUE`) because the hexagonal display is not properly rendered in 
+them.
 
-Flowers with a long sepal and all the other variables being small are classified
-in the top left corner of the map. Flowers with large sepals and petals (length
-and width) are classified in the bottom right corner of the map whereas flowers
-with small sepal length are classified in the top right corner of the map.
 
 #### More graphics on observations
 
-```{r irisObs}
-plot(iris.som, what="obs", type="boxplot", print.title=TRUE)
-rownames(iris)
-plot(iris.som, what="obs", type="names", print.title=TRUE, scale=c(0.9,0.5))
+Individual information on observations in clustered can be obtained with the
+following plots: 
+
+```{r irisObs, warning=FALSE}
+plot(iris.som, what = "obs", type = "boxplot", show.names = TRUE)
+plot(iris.som, what = "obs", type = "lines", show.names = TRUE)
+plot(iris.som, what = "obs", type = "names", show.names = TRUE)
 ```
 
-* By default, the ```"boxplot"``` plot considers all numerical variables of the 
-data set. As this example used the four numerical variables of the iris data 
-set, four boxplots are plotted in each neuron.
-* The ```"names"``` plot prints, for each neuron, the names of the observations 
-which are assigned to its cluster. Here, the row names of iris data set are 
-simply the row numbers.
+They display either the observation distribution within the cluster for all
+the variables in the dataset (for `"boxplot"` and `"lines"`) or the names (row
+numbers by default) of the observations classified within the cluster.
+
 
 #### More graphics on prototypes
 
-Some more graphics handling prototypes have been implemented.
+Some more graphics handling prototypes have been implemented:
+
+* ```"3d"``` provides the same results as `"color"` but on a 3 dimensional plot:
+x is the x dimension of the grid, y is the y dimension of the grid and z is the
+value of the prototype for the variable ```variable``` (by name or number in the
+dataset) of the corresponding neuron. For the hexagonal topology, the plot is
+obtained using a linear interpolation on a regular square grid.
 
 ```{r irisProto}
 par(mfrow=c(2,2))
-plot(iris.som, what="prototypes", type="3d", variable=1, main="Sepal length")
-plot(iris.som, what="prototypes", type="3d", variable=2, main="Sepal width")
-plot(iris.som, what="prototypes", type="3d", variable=3, main="Petal length")
-plot(iris.som, what="prototypes", type="3d", variable=4, main="Petal width")
+plot(iris.som, what = "prototypes", type = "3d", variable = 1)
+plot(iris.som, what = "prototypes", type = "3d", variable = 2)
+plot(iris.som, what = "prototypes", type = "3d", variable = 3)
+plot(iris.som, what = "prototypes", type = "3d", variable = 4)
 ```
-
-```"3d"``` provides the same results as "color" but in a 3 dimensional graphic:
-x is the x dimension of the grid, y is the y dimension of the grid and z is the
-value of the prototype for the variable ```variable``` (by name or number in the
-dataset) of the corresponding neuron.
 
 Also, some graphics are provided to visualize the distance between prototypes on
 the grid:
-```{r irisDistProto}
-plot(iris.som, what="prototypes", type="poly.dist")
-plot(iris.som, what="prototypes", type="umatrix")
-plot(iris.som, what="prototypes", type="smooth.dist")
-plot(iris.som, what="prototypes", type="mds")
-plot(iris.som, what="prototypes", type="grid.dist")
+
+```{r irisDistProto, warning=FALSE, include=TRUE}
+plot(iris.som, what = "prototypes", type = "poly.dist", show.names = FALSE)
+```
+
+```{r irisDistProto2, warning=FALSE}
+plot(iris.som, what = "prototypes", type = "umatrix")
+plot(iris.som, what = "prototypes", type = "smooth.dist")
+plot(iris.som, what = "prototypes", type = "mds")
+plot(iris.som, what = "prototypes", type = "grid.dist")
 ```
 
 * ```"poly.dist"``` represents the distances between neighboring prototypes with
@@ -337,96 +356,110 @@ representing the distance between the prototypes in the input space, and y
 coordinates representing the distance between the corresponding neurons on the
 grid.
 
-These graphics show that there is a big gap (large distances) in the diagonal
-that goes from the bottom left part of the map to its top right corner. Hence,
-for instance, the flowers classified in cluster 15 are rather different from
-those classified in cluster 20, even if these two clusters are adjacent on the
-map. This is also emphasized on the MDS plot where clusters 15 and 20 are not
-very close.
+These graphics show that there is a big gap (large distances) between the top 
+left corner and the rest of the map and between the top right corner and the 
+rest of the map (which is consistent with what was already observed in the 
+previous plots). In addition, the bottom right corner of the maps has a few
+neurons (21, 22, 23) that are very closed to each others.
+
 
 #### Graphics showing an additional variable
 
-##### additional factor
+##### Additional factor
 
-Let us plot pies for all neurons according to the flower species of the 
-observations.
-```{r irisAdd1}
+The clustering can be analyzed together with an additional variable (here, the
+flower species) using `what = "add"`:
+```{r irisAdd1, include=TRUE}
 class(iris$Species)
 levels(iris$Species)
-plot(iris.som, what="add", type="pie", variable=iris$Species)
+plot(iris.som, what = "add", type = "pie", variable = iris$Species) +
+  scale_fill_brewer(type = "qual") + 
+  guides(fill = guide_legend(title = "Species"))
 ```
 
-This figure shows that the clustering produced by the SOM is indeed relevant
+This plot shows that the clustering produced by the SOM is indeed relevant
 to identify the three different species of iris: they are well separated on the
-map and almost all clusters only contain one species of iris.
+map and almost all clusters only contain one species of iris. The Setosa species
+is the most distinct from the other two, isolated in the top left corner of the
+map.
 
-##### additional numerical vector
+
+##### Additional numerical vector
 
 The ```"color"``` plot available for ```"add"``` is similar to the ```"obs"``` 
-or ```"prototypes"``` cases. Here we choose as an additional variable the first 
-variable of the iris data set, so we obtain the same graphic as above (see 
-section __Graphics common to observations and prototypes__).
+or ```"prototypes"``` cases. Here we choose the first variable of the iris data 
+set as an additional variable to illustrate its use. We thus obtain the same 
+plot as above (see section __Graphics common to observations and prototypes__).
 ```{r irisAdd2}
-plot(iris.som, what="add", type="color", variable=iris$Sepal.Length)
+plot(iris.som, what = "add", type = "color", variable = iris$Sepal.Length, 
+     show.names = FALSE)
 ```
 
-##### additional numerical matrix or data frame
+##### Additional numerical matrix or data frame
 
 The ```"lines"```, ```"barplot"```, ```"radar"``` and ```"boxplot"``` plots 
 available for ```"add"``` are similar to the ```"obs"``` or ```"prototypes"``` 
 cases.
 
 ```"words"``` is only implemented for an additional variable. In this case, the 
-additional variable must be a contingency matrix: the words used on the graph 
-are the names of the colums and the presence or lack of the word is expressed 
+additional variable must be a contingency matrix: the words used on the plot 
+are the names of the columns and the presence or lack of the word is expressed 
 by respectively 1 or 0. The size of the words on the grid depends on the rate 
-of presence in the observations of the current neuron.
+of presence in the observations of the current neuron. To illustrate its use,
+we define a contingency table `my.cont.mat` that corresponds to the flower
+Species:
 ```{r irisMatCont, echo=FALSE}
 my.cont.mat <- matrix(data=c(rep(c(rep(1,50), rep(0,150)), 2), rep(1,50)), 
-                      nrow=150, ncol=3)
+                      nrow = 150, ncol = 3)
 colnames(my.cont.mat) <- levels(iris$Species)
 ```
+
 ```{r irisAdd4}
-# my.cont.mat is the contingency matrix corresponding to the variable 
-# iris$Species - overview of the 5 first lines:
-my.cont.mat[1:5,]
-plot(iris.som, what="add", type="words", variable=my.cont.mat)
+head(my.cont.mat)
+plot(iris.som, what = "add", type = "words", variable = my.cont.mat, 
+     show.names = FALSE)
 ```
 
-##### additional non-numerical vector
+##### Additional non-numerical vector
 
 ```"names"``` is similar to the ```"names"``` case implemented for ```"obs"```. 
 Here we choose to give the argument ```variable``` the row names of the iris 
-data set: so we obtain the same graphic as above (see 
+data set: so we obtain the same plot as above (see 
 __More graphics on observations__).
-```{r irisAdd5}
-plot(iris.som, what="add", type="names", variable=rownames(iris),
-     scale=c(0.9,0.5))
+```{r irisAdd5, warning=FALSE}
+plot(iris.som, what = "add", type = "names", variable = rownames(iris)) 
 ```
 
-Then, we can try to call this plot again but on the variable ```iris$Species```.
-```{r irisAdd5bis}
-plot(iris.som, what="add", type="names", variable=iris$Species)
+Similarly, this plot can be used with the variable ```iris$Species```:
+```{r irisAdd5bis, warning=FALSE}
+plot(iris.som, what = "add", type = "names", variable = iris$Species)
 ```
 
-We obtain exactly the same plot as we obtained above for ```"words"``` with the 
+which gives exactly the same plot as before for type ```"words"``` with the 
 contingency matrix corresponding to the variable ```iris$Species```.
+
 
 ### Analyze the projection quality
 
-```{r irisQuality}
+```{r irisQuality, include=TRUE}
 quality(iris.som)
 ```
+
+```{r saveQual, echo=FALSE}
+qualities <- quality(iris.som)
+```
+
 By default, the quality function calculates both quantization and topographic 
 errors. It is also possible to specify which one you want using the 
 argument ```quality.type```.
 
 The topographic error value varies between 0 (good projection quality) and 1 
 (poor projection quality). Here, the topographic quality of the mapping is 
-equal to 0.05 which means that all observations have a second best unit which is
-in the neighborhood of the best matching unit.
+equal to `r round(qualities$topographic, 2)`, which means that around
+`r round(qualities$topographic * 100, 1)`% of the observations have a second 
+best unit in the neighborhood of the best matching unit.
 
-The quantization error is an unbounded positive number. The closer it is from 0,
+The quantization error is an unbounded positive number. The closer it is to 0,
 the better the projection quality.
 
 
@@ -442,7 +475,7 @@ clustering on the prototypes. This clustering is directly available in the
 package ```SOMbrero``` using the function ```superClass```. To do so, you can
 first have a quick overview to decide on the number of super clusters which 
 suits your data.
-```{r irisSC}
+```{r irisSC, include=TRUE}
 plot(superClass(iris.som))
 ```
 
@@ -450,20 +483,20 @@ By default, the function plots both a dendrogram and the evolution of the
 percentage of explained variance. Here, 3 super clusters seem to be the best
 choice. The output of ```superClass``` is a ```somSC``` class object.
 Basic functions have been defined for this class:
-```{r irisSC3}
-my.sc <- superClass(iris.som, k=3)
+```{r irisSC3, include=TRUE}
+my.sc <- superClass(iris.som, k = 3)
 summary(my.sc)
-plot(my.sc, plot.var=FALSE)
+plot(my.sc, plot.var = FALSE)
 ```
 
 Like ```plot.somRes```, the function ```plot.somSC``` has an argument ```type```
 which offers many different plots and can thus be combined with most of the
 graphics produced by ```plot.somSC```:
-```{r irisSCplot, fig.width=6, fig.height=4}
-plot(my.sc, type="grid", plot.legend=TRUE)
+```{r irisSCplot, fig.width=6, fig.height=4, include=TRUE}
+plot(my.sc, type = "grid")
 ```
 ```{r irisSCplot3d}
-plot(my.sc, type="dendro3d")
+plot(my.sc, type = "dendro3d")
 ```
 
 Case ```"grid"``` fills the grid with colors according to the super clustering 
@@ -472,36 +505,42 @@ Case ```"dendro3d"``` plots a 3d dendrogram.
 
 A couple of plots from ```plot.somRes``` are also available for the super 
 clustering. Some identify the super clusters with colors:
-```{r irisSCplot2, fig.width=6, fig.height=4}
-plot(my.sc, type="hitmap", plot.legend=TRUE)
+```{r irisSCplot2, fig.width=6, fig.height=5}
+plot(my.sc, what = "obs", type = "hitmap", maxsize = 20)
 ```
 
 ```{r irisSCplot2B}
-plot(my.sc, type="lines", print.title=TRUE)
-plot(my.sc, type="barplot", print.title=TRUE)
-plot(my.sc, type="boxplot", print.title=TRUE)
+plot(my.sc, what = "prototypes", type = "lines")
+plot(my.sc, what = "prototypes", type = "barplot")
 ```
+
 ```{r irisSCplot2C, fig.height=4, fig.width=6}
-plot(my.sc, type="mds", plot.legend=TRUE, cex =2)
+plot(my.sc, what = "prototypes", type = "mds")
 ```
 
 And some others identify the super clusters with titles:
-```{r irisSCplot3}
-plot(my.sc, type="color")
-plot(my.sc, type="poly.dist")
-plot(my.sc, type="pie", variable=iris$Species)
-plot(my.sc, type="radar", key.loc=c(-0.5,5), mar=c(0,10,2,0))
+```{r irisSCplot3, include=TRUE}
+plot(my.sc, what = "prototypes", type = "color", variable = "Sepal.Length")
+plot(my.sc, what = "prototypes", type = "poly.dist")
 ```
 
 It is also possible to consider an additional variable using the 
-argument ```add.variable```:
+argument ```what='add'```:
 ```{r irisSCplot4}
-plot(my.sc, type="color", add.type=TRUE, variable=iris$Sepal.Length)
+plot(my.sc, what = "add", type = "pie", variable = iris$Species) +
+  scale_fill_brewer(type = "qual")
+plot(my.sc, what = "add", type = "color", variable = iris$Sepal.Length)
 ```
 
-All these graphics help to see that super-cluster number 2 is found in the top
-right corner of the map and contains only flowers of the "setosa" species. 
-Super cluster number 3, at the bottom right corner of the map, contains mostly
-flowers of the "virginica" species. The last super-cluster is located at the
-top right corner of the map and mostly contains flowers of the species 
-"versicolor".
+Super cluster number 2 is located at the top left hand corner of the map and 
+associated with the Setosa species. SC 3 is in the opposite corner and 
+associated mainly with Virginica whereas SC 1 is in the diagonal between these
+two corners and associated with Versicolor.
+
+
+### Session information
+
+This vignette has been computed with the following environment:
+```{r sessionInfo, include=TRUE}
+sessionInfo()
+```

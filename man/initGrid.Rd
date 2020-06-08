@@ -4,16 +4,19 @@
 \alias{initGrid}
 \title{Create an empty grid}
 \usage{
-initGrid(dimension = c(5, 5), topo = c("square", "hexagonal"),
-  dist.type = c("euclidean", "maximum", "manhattan", "canberra",
-  "minkowski", "letremy"))
+initGrid(
+  dimension = c(5, 5),
+  topo = c("square", "hexagonal"),
+  dist.type = c("euclidean", "maximum", "manhattan", "canberra", "minkowski",
+    "letremy")
+)
 }
 \arguments{
 \item{dimension}{a 2-dimensional vector giving the dimensions (width, length)
 of the grid}
 
-\item{topo}{topology of the grid. Only \code{"square"} is supported for the
-moment}
+\item{topo}{topology of the grid. Accept values \code{"square"} (Default) or
+\code{"hexagonal"}.}
 
 \item{dist.type}{distance type that defines the topology of the grid (see
 'Details'). Default to \code{"euclidean"}}
@@ -58,6 +61,7 @@ et dédiés à l'analyse des données. SAS/IML programs for 'korresp'.
 \code{\link{plot.myGrid}} for plotting the grid
 }
 \author{
+Élise Maigné <elise.maigne@inrae.fr>\cr
 Madalina Olteanu <madalina.olteanu@univ-paris1.fr>\cr
 Nathalie Vialaneix <nathalie.vialaneix@inrae.fr>
 }

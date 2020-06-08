@@ -16,7 +16,7 @@ plot(iris.som, what="prototypes", type="3d", variable=1)
 # see the distances between prototypes
 ## distance between the vertices of the polygon and the grid borders 
 ## are proportional to the distance between the neighbouring prototypes
-plot(iris.som, what="prototypes", type="poly.dist", print.title=TRUE)
+plot(iris.som, what="prototypes", type="poly.dist")
 
 # The distribution of observations on the map can be seen 
 ## either with a graphic
@@ -24,13 +24,8 @@ plot(iris.som, what="obs", type="hitmap")
 ## or with a table
 table(iris.som$clustering)
 ## or more precisely by printing the names of the rows in their assigned neuron
-### WARNING: this graphic may produce some warnings when all row names can not fit on the plot
-### they can be solved by using the 'scale' argument (see 'help(wordcloud)')
+### WARNING: this graphic may produce some warnings when all row names can not fit correctly on the plot
 plot(iris.som, what="obs", type="names")
-
-# observation values for each neuron can be plotted with a radar plot
-## the argument 'key.loc' is used to add a legend and specify its location (see 'help(stars)')
-plot(iris.som, what="prototypes", type="radar", key.loc=c(-1,2), mar=c(0,10,2,0))
 
 # the flower species distribution can be plotted by passing the 'Species' variable as an additional variable
 plot(iris.som, what="add", type="pie", variable=iris$Species)
@@ -41,10 +36,10 @@ iris.sc <- superClass(iris.som, k=3)
 summary(iris.sc)
 ## plot its dendrogram
 plot(iris.sc)
-## identify the super clusters on the observation values on the radar plot
-plot(iris.sc, type="radar", key.loc=c(-1,2), mar=c(0,10,2,0))
+## identify the super clusters on the observation values on the boxplots
+plot(iris.sc, what="obs", type="boxplot")
 ## plot the flower species distribution with the super cluster labels
-plot(iris.sc, type="pie", variable=iris$Species)
+plot(iris.sc, what="add", type="pie", variable=iris$Species)
 
 # compute the projection quality indicators
 quality(iris.som)

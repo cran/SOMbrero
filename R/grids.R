@@ -8,12 +8,13 @@
 #'
 #' @param dimension a 2-dimensional vector giving the dimensions (width, length)
 #' of the grid
-#' @param topo topology of the grid. Only \code{"square"} is supported for the
-#' moment
+#' @param topo topology of the grid. Accept values \code{"square"} (Default) or
+#' \code{"hexagonal"}.
 #' @param dist.type distance type that defines the topology of the grid (see
 #' 'Details'). Default to \code{"euclidean"}
 #'
-#' @author Madalina Olteanu <madalina.olteanu@univ-paris1.fr>\cr
+#' @author Élise Maigné <elise.maigne@inrae.fr>\cr
+#' Madalina Olteanu <madalina.olteanu@univ-paris1.fr>\cr
 #' Nathalie Vialaneix <nathalie.vialaneix@inrae.fr>
 #'
 #' @details The units (neurons) of the grid are positionned at coordinates 
@@ -53,29 +54,27 @@ initGrid <- function(dimension = c(5,5), topo = c("square", "hexagonal"),
   # check options
   topo <- match.arg(topo)
   dist.type <- match.arg(dist.type)
-  
+
   # create coordinates for neurons
-  if (topo == "square") {
-    x <- seq(from = 1, to = dimension[1], by = 1)
-    y <- seq(from = 1, to = dimension[2], by = 1)
-    tmp <- as.matrix(expand.grid(y, x))
-    tmp <- cbind(tmp[ ,2], tmp[ ,1])
-    colnames(tmp) <- c("x", "y")
-  } else {
-    stop("Sorry, hexagonal topography is currently being developed")
+  x <- 1:dimension[1]
+  y <- 1:dimension[2]
+  tmp <- as.matrix(expand.grid(x, y))
+  tmp <- tmp[order(tmp[,1]),]
+  if (topo == "hexagonal") {
+    tmp[, 1] <- tmp[, 1] + 0.5 * (tmp[, 2] %% 2)
+    tmp[, 2] <- sqrt(3)/2 * tmp[ ,2]
   }
-  
+  colnames(tmp) <- c("x", "y")
   result <- list("coord" = tmp, "topo" = topo, "dim" = dimension,
                  "dist.type" = dist.type)
   class(result) <- "myGrid"
-  
+
   return(result)
 }
 
 ## Methods for objects of class 'myGrid'
 #' @title Methods for 'myGrid' objects.
 #' @name myGrid
-#' @exportClass myGrid
 #' @export
 #'
 #' @aliases summary.myGrid
@@ -87,17 +86,14 @@ initGrid <- function(dimension = c(5,5), topo = c("square", "hexagonal"),
 #' (\code{myGrid} object)
 #' @param object \code{myGrid} object
 #' @param x \code{myGrid} object
-#' @param neuron.col Color(s) used to depict the neurons. Default value is 
-#' \code{white}. If the argument is composed of one single color, neurons will 
-#' all be filled with the same color. If the argument is composed of many 
-#' colors, the number of colors must match the total number of neurons.
-#' @param print.title Whether the cluster titles must be printed in center of
-#' the grid or not. Default to \code{FALSE} (titles not displayed).
-#' @param the.titles If \code{print.title = TRUE}, values of the title to 
-#' display. Default to "Cluster " followed by the cluster number.
+#' @param show.names Whether the cluster names must be printed in center of
+#' the grid or not. Default to \code{TRUE} (names not displayed).
+#' @param names If \code{show.names = TRUE}, values of the names to 
+#' display. Default to the cluster number.
 #' @param \dots Further arguments to the \code{\link{plot}} function.
 #' 
-#' @author Madalina Olteanu, \email{madalina.olteanu@univ-paris1.fr}\cr
+#' @author Élise Maigné <elise.maigne@inrae.fr>\cr
+#' Madalina Olteanu, \email{madalina.olteanu@univ-paris1.fr}\cr
 #' Nathalie Vialaneix, \email{nathalie.vialaneix@inrae.fr}
 #' 
 #' @details The \code{myGrid} class has the following entries:
@@ -123,10 +119,10 @@ initGrid <- function(dimension = c(5,5), topo = c("square", "hexagonal"),
 #' # without any color specification
 #' plot(a.grid)
 #' # generating colors from rainbow() function
-#' my.colors <- rainbow(5*5)
-#' plot(a.grid, neuron.col=my.colors)
+#' my.colors <- grDevices::rainbow(5*5)
+#' plot(a.grid) + ggplot2::scale_fill_manual(values = my.colors)
 
-print.myGrid <-function(x,...) {
+print.myGrid <- function(x, ...) {
   cat("\n      Self-Organizing Map structure\n\n")
   cat("        Features   :\n")
   cat("           topology     : ", x$topo, "\n")
@@ -136,9 +132,10 @@ print.myGrid <-function(x,...) {
   cat("\n")
 }
 
+#' @method summary myGrid
 #' @export
 #' @rdname myGrid
-summary.myGrid <- function(object,...) {
+summary.myGrid <- function(object, ...) {
   cat("\nSummary\n\n")
   cat("      Class            : ", class(object), "\n")
   print(object)
@@ -146,47 +143,29 @@ summary.myGrid <- function(object,...) {
 
 #' @export
 #' @rdname myGrid
-plot.myGrid <- function(x, neuron.col = "white", print.title = FALSE, 
-                        the.titles = paste("Cluster", 1:prod(x$dim)), ...) {
+plot.myGrid <- function(x, show.names = TRUE, names = 1:prod(x$dim), ...) {
   # get graphical parameters
   args <- list(...)
   
-  # default parameter: new graphic
-  omar <- par()$mar
-  on.exit(par(mar=omar))
-  plane.mar <- c(0.5,0.5,1,0.5)
-  par(mar=plane.mar)
-  
-  # default parameter: squares topology
-  ## TODO implement other topologies such as hexagonal
-  if (x$topo=="square") {
-    basesize <- 0.5
-    xleft <- (x$coord[,1] - basesize)
-    xright <- (x$coord[,1] + basesize)
-    ybottom <- (x$coord[,2] - basesize)
-    ytop <- (x$coord[,2] + basesize)
-    
-    # collect all arguments for plotting
-    plot.args <- args
-    plot.args$x <- NA
-    plot.args$xlim <- range(c(xleft, xright))
-    plot.args$ylim <- range(c(ybottom, ytop))
-    plot.args$xlab <- ""
-    plot.args$ylab <- ""
-    plot.args$axes <- FALSE
-    plot.args$type <- "n"
-    do.call("plot", plot.args)
-    
-    # default parameter: neuron.col=white
-    if(length(neuron.col) != prod(x$dim) & length(neuron.col) > 1) {
-      warning("unadequate number of colors; default color will be used\n", 
-              immediate. = TRUE, call. = TRUE)
-      neuron.col <- "white"
-    }
-    rect(xleft, ybottom, xright, ytop, col = neuron.col)
-    
-    if (print.title) {
-      text(x = x$coord[,1], y = x$coord[,2], labels = the.titles, cex = 0.7)
-    }
+  calls <- names(sapply(match.call(), deparse))[-1]
+  if(any("print.title" %in% calls)) {
+    warning("'print.title' will be deprecated, please use 'show.names' instead",
+            call. = TRUE, immediate. = TRUE)
+    show.names <- args$print.title
   }
+  if(any("the.titles" %in% calls)) {
+    warning("'the.titles' will be deprecated, please use 'names' instead",
+            call. = TRUE, immediate. = TRUE)
+    names <- args$the.titles
+  }
+  
+  dimgrid <- prod(x$dim)
+  values <- 1:dimgrid
+  id <- 1:dimgrid
+  if(is.null(args$main)) args$main <- "Grid"
+
+  tp <- ggplotGrid("obs", "grid", values, id,
+                   show.names, names, x, args) + 
+        theme(legend.position = "none")
+  tp
 }

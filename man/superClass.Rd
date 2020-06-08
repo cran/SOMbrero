@@ -5,8 +5,9 @@
 \alias{superClass.somRes}
 \alias{print.somSC}
 \alias{summary.somSC}
-\alias{plot.somSC}
 \alias{projectIGraph.somSC}
+\alias{plot.somSC}
+\alias{somSC-class}
 \title{Create super-clusters from SOM results}
 \usage{
 superClass(sommap, method, members, k, h, ...)
@@ -15,12 +16,16 @@ superClass(sommap, method, members, k, h, ...)
 
 \method{summary}{somSC}(object, ...)
 
-\method{plot}{somSC}(x, type = c("dendrogram", "grid", "hitmap", "lines",
-  "barplot", "boxplot", "mds", "color", "poly.dist", "pie", "graph",
-  "dendro3d", "radar", "projgraph"), plot.var = TRUE,
-  plot.legend = FALSE, add.type = FALSE, print.title = FALSE,
-  the.titles = paste("Cluster", 1:prod(x$som$parameters$the.grid$dim)),
-  ...)
+\method{plot}{somSC}(
+  x,
+  what = c("obs", "prototypes", "add"),
+  type = c("dendrogram", "grid", "hitmap", "lines", "meanline", "barplot", "boxplot",
+    "mds", "color", "poly.dist", "pie", "graph", "dendro3d", "projgraph"),
+  plot.var = TRUE,
+  show.names = TRUE,
+  names = 1:prod(x$som$parameters$the.grid$dim),
+  ...
+)
 
 \method{projectIGraph}{somSC}(object, init.graph, ...)
 }
@@ -46,6 +51,14 @@ the function \code{\link{plot}} (case \code{type="dendro"}) or to
 
 \item{object}{A \code{somSC} object.}
 
+\item{what}{What you want to plot for superClass object. Either the 
+observations (\code{obs}), the prototypes (\code{prototypes}) or an 
+additional variable (\code{add}), or \code{NULL} if not appropriate. 
+Automatically set for types "hitmap" (to \code{"obs"}), 'grid' 
+(to \code{"prototypes"}), default to "obs" otherwise.
+If \code{what='add'}, the function \code{\link{plot.somRes}} will be called with
+the argument \code{what} set to \code{"add"}.}
+
 \item{type}{The type of plot to draw. Default value is \code{"dendrogram"}, 
 to plot the dendrogram of the clustering. Case \code{"grid"} plots the grid 
 in color according to the super clustering. Case \code{"projgraph"} uses an
@@ -58,20 +71,11 @@ and surimpose the super-clusters over these plots.}
 the explained variance should be plotted. This argument is only used when 
 \code{type="dendrogram"}, its default value is \code{TRUE}.}
 
-\item{plot.legend}{A boolean indicating whether a legend should be added to 
-the plot. This argument is only used when \code{type} is either \code{"grid"} 
-or \code{"hitmap"} or \code{"mds"}. Its default value is \code{FALSE}.}
-
-\item{add.type}{A boolean, which default value is \code{FALSE}, indicating 
-whether you are giving an additional variable to the argument \code{variable}
-or not. If you do, the function \code{\link{plot.somRes}} will be called with
-the argument \code{what} set to \code{"add"}.}
-
-\item{print.title}{Whether the cluster titles must be printed in center of
+\item{show.names}{Whether the cluster titles must be printed in center of
 the grid or not for \code{type="grid"}. Default to \code{FALSE} (titles not 
 displayed).}
 
-\item{the.titles}{If \code{print.title = TRUE}, values of the title to 
+\item{names}{If \code{show.names = TRUE}, values of the title to 
 display for \code{type="grid"}. Default to "Cluster " followed by the cluster
 number.}
 
@@ -132,21 +136,22 @@ the Fisher distribution and not on a permutation test.
 On plots, the different super classes are identified in the following ways:
 \itemize{
   \item either with different color, when \code{type} is set among: 
-  \code{"grid"} (*, #), \code{"hitmap"} (*, #), \code{"lines"} (*, #), 
-  \code{"barplot"} (*, #), \code{"boxplot"}, \code{"mds"} (*, #), 
-  \code{"dendro3d"} (*, #), \code{"graph"} (*, #)
-  \item or with title, when \code{type} is set among: \code{"color"} (*),
-  \code{"poly.dist"} (*, #), \code{"pie"} (#), \code{"radar"} (#)
+  \code{"grid"} (N, K, R), \code{"hitmap"} (N, K, R), \code{"lines"} (N, K, R), 
+  \code{"barplot"} (N, K, R), \code{"boxplot"}, \code{"poly.dist"} (N, K, R), 
+  \code{"mds"} (N, K, R), \code{"dendro3d"} (N, K, R), \code{"graph"} (R),
+  \code{"projgraph"} (R)
+  \item or with title, when \code{type} is set among: \code{"color"} (N, K),
+  \code{"pie"} (N, R)
 }
-In the list above, the charts available for a \code{korresp} SOM are marked 
-with a * whereas those available for a \code{relational} SOM are marked with 
-a #.
 
-\code{projectIGraph.somSC} produces a projected graph from the 
+In the list above, the charts available for a \code{numerical} SOM are maked
+with a N, with a K for a \code{korresp} SOM and with a R for \code{relational} SOM.
+
+\code{\link{projectIGraph.somSC}} produces a projected graph from the 
 \link[igraph]{igraph} object passed to the argument \code{variable} as 
 described in (Olteanu and Villa-Vialaneix, 2015). The attributes of this 
 graph are the same than the ones obtained from the SOM map itself in the 
-function \code{\link{projectIGraph.somRes}}. \code{plot.somSC} used with 
+function \code{\link{projectIGraph.somRes}}. \code{\link{plot.somSC}} used with 
 \code{type="projgraph"} calculates this graph and represents it by 
 positionning the super-vertexes at the center of gravity of the 
 super-clusters. This feature can be combined with \code{pie.graph=TRUE} to 
@@ -156,15 +161,16 @@ individuals in the original dataset (or, equivalently, to the vertexes of the
 }
 \examples{
 set.seed(11051729)
-my.som <- trainSOM(x.data=iris[,1:4])
+my.som <- trainSOM(x.data = iris[,1:4])
 # choose the number of super-clusters
 sc <- superClass(my.som)
 plot(sc)
 # cut the clustering
-sc <- superClass(my.som, k=4)
+sc <- superClass(my.som, k = 4)
 summary(sc)
 plot(sc)
-plot(sc, type="hitmap", plot.legend=TRUE)
+plot(sc, type = "grid")
+plot(sc, what = "obs", type = "hitmap")
 }
 \references{
 Anderson M.J. (2001). A new method for non-parametric multivariate analysis 
@@ -179,6 +185,7 @@ visualizing graphs. \emph{Journal de la Societe Francaise de Statistique},
 \code{\link{plot.somRes}}
 }
 \author{
+Élise Maigné <elise.maigne@inrae.fr>\cr
 Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
 Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}
 }

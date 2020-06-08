@@ -1,24 +1,29 @@
+## ----setup, include=TRUE-------------------------------------------------
+knitr::opts_chunk$set(include = FALSE)
+
 ## ----loading, results='hide', echo=FALSE, warning=FALSE, message=FALSE----
-library(SOMbrero)
+library("ggplot2")
+library("SOMbrero")
 
 ## ----dataGeneration------------------------------------------------------
 set.seed(4031719)
-the.data <- data.frame("x1"=runif(500), "x2"=runif(500))
-plot(the.data, pch=19)
+the.data <- data.frame("x1" = runif(500), "x2" = runif(500))
+ggplot(the.data, aes(x = x1, y = x2)) + geom_point() + theme_bw()
 
 ## ----dataTrain-----------------------------------------------------------
-set.seed(593)
+set.seed(1105)
 # run the SOM algorithm with 10 intermediate backups and 2000 iterations
 my.som <- trainSOM(x.data=the.data, dimension=c(5,5), nb.save=10, maxit=2000, 
-                   scaling="none", radius.type="letremy")
+                   scaling="none", radius.type="letremy", topo="square",
+                   dist.type = "letremy")
 
-## ----energy--------------------------------------------------------------
+## ----energy, include=TRUE------------------------------------------------
 plot(my.som, what="energy")
 
-## ----hitmapObs-----------------------------------------------------------
-plot(my.som, what="obs", type="hitmap")
+## ----hitmapObs, fig.height=6, fig.width=6--------------------------------
+plot(my.som, what = "obs", type = "hitmap")
 
-## ----clusteredData, echo=FALSE, cache=TRUE-------------------------------
+## ----clusteredData, include=TRUE, cache=TRUE-----------------------------
 # prepare a vector of colors
 my.colors <- rainbow(prod(my.som$parameters$the.grid$dim))[my.som$clustering]
 
@@ -26,26 +31,24 @@ my.colors <- rainbow(prod(my.som$parameters$the.grid$dim))[my.som$clustering]
 plot(my.som$data[,1], my.som$data[,2], col=my.colors, pch=19, xlab="x1", 
      ylab="x2", main="Data according to final clustering")
 
-## ----colorProto, fig.width=5, fig.height=2.5-----------------------------
+## ----colorProto, fig.width=5, fig.height=2.5, include=TRUE---------------
 par(mfrow=c(1,2))
-plot(my.som, what="prototypes", type="color", var=1, main="prototypes - x1")
-plot(my.som, what="prototypes", type="color", var=2, main="prototypes - x2")
+plot(my.som, what="prototypes", type="color", var=1)
+plot(my.som, what="prototypes", type="color", var=2)
 
 ## ----colorObs, fig.width=5, fig.height=2.5-------------------------------
 par(mfrow=c(1,2))
-plot(my.som, what="obs", type="color", var=1, main="obs mean values - x1")
-plot(my.som, what="obs", type="color", var=2, main="obs mean values - x2")
+plot(my.som, what="obs", type="color", var=1)
+plot(my.som, what="obs", type="color", var=2)
 
-## ----protoEvoluation, fig.width=15, fig.height=6, echo=FALSE-------------
-# find out the prototypes to be linked
-tra <- NULL
-for (i in c(1,6,11,16,21)){
-  tra <- c(tra, i, i+1, i+1, i+2, i+2, i+3, i+3, i+4)
-}
-for (i in c(1:5)){
-  tra <- c(tra, i, i+5, i+5, i+10, i+10, i+15, i+15, i+20)
-}
-tmp <- matrix(tra, ncol=2, byrow=TRUE)
+## ----protoEvoluation, fig.width=15, fig.height=6, include=TRUE, echo=FALSE----
+# Get the neighbours between prototypes
+values <- protoDist(my.som, "neighbors")
+tmp <- data.frame("prot1" = rep.int(1:prod(my.som$parameters$the.grid$dim), 
+                                    times=sapply(values, length)), 
+                  "nei" = as.numeric(as.character(names(unlist(values)))))
+tmp <- tmp[tmp[ ,1] < tmp[ ,2], ]
+
 # plot the prototypes
 par(mfrow=c(2, 5),mar=c(3,2,2,1))
 invisible(sapply(1:my.som$parameters$nb.save, function(ind){
@@ -60,124 +63,132 @@ invisible(sapply(1:my.som$parameters$nb.save, function(ind){
   }
 }))
 
-## ----irisTrain, cache=TRUE-----------------------------------------------
+## ----irisTrain, cache=TRUE, include=TRUE---------------------------------
 set.seed(255)
 # run the SOM algorithm with verbose set to TRUE
-iris.som <- trainSOM(x.data=iris[,1:4], verbose=TRUE, nb.save=5)
+iris.som <- trainSOM(x.data = iris[,1:4], dimension = c(5,5), verbose = TRUE, 
+                     nb.save = 5, topo = "hexagonal")
 iris.som
 
-## ----energyIris----------------------------------------------------------
+## ----energyIris, include=TRUE--------------------------------------------
 plot(iris.som, what="energy")
 
-## ----irisClusters--------------------------------------------------------
+## ----irisClusters, include=TRUE------------------------------------------
 iris.som$clustering
 table(iris.som$clustering)
 
-## ----irisHitmap----------------------------------------------------------
+## ----irisHitmap, include=TRUE--------------------------------------------
 plot(iris.som, what="obs", type="hitmap")
 
-## ----irisSummary---------------------------------------------------------
+## ----irisSummary, include=TRUE-------------------------------------------
 summary(iris.som)
 
-## ----irisPred1-----------------------------------------------------------
+## ----irisPred1, include=TRUE---------------------------------------------
 # call predict.somRes
 predict(iris.som, iris[1,1:4])
 # check the result of the final clustering with the SOM algorithm
 iris.som$clustering[1]
 
-## ----irisGraphOP---------------------------------------------------------
-par(mfrow=c(2,2))
-plot(iris.som, what="obs", type="color", variable=1, print.title=TRUE, 
-     main="Sepal length")
-plot(iris.som, what="obs", type="color", variable=2, print.title=TRUE, 
-     main="Sepal width")
-plot(iris.som, what="obs", type="color", variable=3, print.title=TRUE, 
-     main="Petal length")
-plot(iris.som, what="obs", type="color", variable=4, print.title=TRUE, 
-     main="Petal width")
-plot(iris.som, what="prototypes", type="lines", print.title=TRUE)
-plot(iris.som, what="obs", type="barplot", print.title=TRUE)
-plot(iris.som, what="obs", type="radar", key.loc=c(-0.5,5), mar=c(0,10,2,0))
+## ----irisGraphOP, include=TRUE-------------------------------------------
+par(mfrow = c(2,2))
+plot(iris.som, what = "obs", type = "color", variable = 1)
+plot(iris.som, what = "obs", type = "color", variable = 2)
+plot(iris.som, what = "obs", type = "color", variable = 3)
+plot(iris.som, what = "obs", type = "color", variable = 4)
 
-## ----irisObs-------------------------------------------------------------
-plot(iris.som, what="obs", type="boxplot", print.title=TRUE)
-rownames(iris)
-plot(iris.som, what="obs", type="names", print.title=TRUE, scale=c(0.9,0.5))
+## ----irisGraphOP2--------------------------------------------------------
+plot(iris.som, what = "prototypes", type = "lines", show.names = TRUE) + 
+  theme(axis.text.x = element_blank())
+plot(iris.som, what = "obs", type = "barplot", show.names = TRUE) + 
+  theme(axis.text.x = element_blank())
+
+## ----irisObs, warning=FALSE----------------------------------------------
+plot(iris.som, what = "obs", type = "boxplot", show.names = TRUE)
+plot(iris.som, what = "obs", type = "lines", show.names = TRUE)
+plot(iris.som, what = "obs", type = "names", show.names = TRUE)
 
 ## ----irisProto-----------------------------------------------------------
 par(mfrow=c(2,2))
-plot(iris.som, what="prototypes", type="3d", variable=1, main="Sepal length")
-plot(iris.som, what="prototypes", type="3d", variable=2, main="Sepal width")
-plot(iris.som, what="prototypes", type="3d", variable=3, main="Petal length")
-plot(iris.som, what="prototypes", type="3d", variable=4, main="Petal width")
+plot(iris.som, what = "prototypes", type = "3d", variable = 1)
+plot(iris.som, what = "prototypes", type = "3d", variable = 2)
+plot(iris.som, what = "prototypes", type = "3d", variable = 3)
+plot(iris.som, what = "prototypes", type = "3d", variable = 4)
 
-## ----irisDistProto-------------------------------------------------------
-plot(iris.som, what="prototypes", type="poly.dist")
-plot(iris.som, what="prototypes", type="umatrix")
-plot(iris.som, what="prototypes", type="smooth.dist")
-plot(iris.som, what="prototypes", type="mds")
-plot(iris.som, what="prototypes", type="grid.dist")
+## ----irisDistProto, warning=FALSE, include=TRUE--------------------------
+plot(iris.som, what = "prototypes", type = "poly.dist", show.names = FALSE)
 
-## ----irisAdd1------------------------------------------------------------
+## ----irisDistProto2, warning=FALSE---------------------------------------
+plot(iris.som, what = "prototypes", type = "umatrix")
+plot(iris.som, what = "prototypes", type = "smooth.dist")
+plot(iris.som, what = "prototypes", type = "mds")
+plot(iris.som, what = "prototypes", type = "grid.dist")
+
+## ----irisAdd1, include=TRUE----------------------------------------------
 class(iris$Species)
 levels(iris$Species)
-plot(iris.som, what="add", type="pie", variable=iris$Species)
+plot(iris.som, what = "add", type = "pie", variable = iris$Species) +
+  scale_fill_brewer(type = "qual") + 
+  guides(fill = guide_legend(title = "Species"))
 
 ## ----irisAdd2------------------------------------------------------------
-plot(iris.som, what="add", type="color", variable=iris$Sepal.Length)
+plot(iris.som, what = "add", type = "color", variable = iris$Sepal.Length, 
+     show.names = FALSE)
 
 ## ----irisMatCont, echo=FALSE---------------------------------------------
 my.cont.mat <- matrix(data=c(rep(c(rep(1,50), rep(0,150)), 2), rep(1,50)), 
-                      nrow=150, ncol=3)
+                      nrow = 150, ncol = 3)
 colnames(my.cont.mat) <- levels(iris$Species)
 
 ## ----irisAdd4------------------------------------------------------------
-# my.cont.mat is the contingency matrix corresponding to the variable 
-# iris$Species - overview of the 5 first lines:
-my.cont.mat[1:5,]
-plot(iris.som, what="add", type="words", variable=my.cont.mat)
+head(my.cont.mat)
+plot(iris.som, what = "add", type = "words", variable = my.cont.mat, 
+     show.names = FALSE)
 
-## ----irisAdd5------------------------------------------------------------
-plot(iris.som, what="add", type="names", variable=rownames(iris),
-     scale=c(0.9,0.5))
+## ----irisAdd5, warning=FALSE---------------------------------------------
+plot(iris.som, what = "add", type = "names", variable = rownames(iris)) 
 
-## ----irisAdd5bis---------------------------------------------------------
-plot(iris.som, what="add", type="names", variable=iris$Species)
+## ----irisAdd5bis, warning=FALSE------------------------------------------
+plot(iris.som, what = "add", type = "names", variable = iris$Species)
 
-## ----irisQuality---------------------------------------------------------
+## ----irisQuality, include=TRUE-------------------------------------------
 quality(iris.som)
 
-## ----irisSC--------------------------------------------------------------
+## ----saveQual, echo=FALSE------------------------------------------------
+qualities <- quality(iris.som)
+
+## ----irisSC, include=TRUE------------------------------------------------
 plot(superClass(iris.som))
 
-## ----irisSC3-------------------------------------------------------------
-my.sc <- superClass(iris.som, k=3)
+## ----irisSC3, include=TRUE-----------------------------------------------
+my.sc <- superClass(iris.som, k = 3)
 summary(my.sc)
-plot(my.sc, plot.var=FALSE)
+plot(my.sc, plot.var = FALSE)
 
-## ----irisSCplot, fig.width=6, fig.height=4-------------------------------
-plot(my.sc, type="grid", plot.legend=TRUE)
+## ----irisSCplot, fig.width=6, fig.height=4, include=TRUE-----------------
+plot(my.sc, type = "grid")
 
 ## ----irisSCplot3d--------------------------------------------------------
-plot(my.sc, type="dendro3d")
+plot(my.sc, type = "dendro3d")
 
-## ----irisSCplot2, fig.width=6, fig.height=4------------------------------
-plot(my.sc, type="hitmap", plot.legend=TRUE)
+## ----irisSCplot2, fig.width=6, fig.height=5------------------------------
+plot(my.sc, what = "obs", type = "hitmap", maxsize = 20)
 
 ## ----irisSCplot2B--------------------------------------------------------
-plot(my.sc, type="lines", print.title=TRUE)
-plot(my.sc, type="barplot", print.title=TRUE)
-plot(my.sc, type="boxplot", print.title=TRUE)
+plot(my.sc, what = "prototypes", type = "lines")
+plot(my.sc, what = "prototypes", type = "barplot")
 
 ## ----irisSCplot2C, fig.height=4, fig.width=6-----------------------------
-plot(my.sc, type="mds", plot.legend=TRUE, cex =2)
+plot(my.sc, what = "prototypes", type = "mds")
 
-## ----irisSCplot3---------------------------------------------------------
-plot(my.sc, type="color")
-plot(my.sc, type="poly.dist")
-plot(my.sc, type="pie", variable=iris$Species)
-plot(my.sc, type="radar", key.loc=c(-0.5,5), mar=c(0,10,2,0))
+## ----irisSCplot3, include=TRUE-------------------------------------------
+plot(my.sc, what = "prototypes", type = "color", variable = "Sepal.Length")
+plot(my.sc, what = "prototypes", type = "poly.dist")
 
 ## ----irisSCplot4---------------------------------------------------------
-plot(my.sc, type="color", add.type=TRUE, variable=iris$Sepal.Length)
+plot(my.sc, what = "add", type = "pie", variable = iris$Species) +
+  scale_fill_brewer(type = "qual")
+plot(my.sc, what = "add", type = "color", variable = iris$Sepal.Length)
+
+## ----sessionInfo, include=TRUE-------------------------------------------
+sessionInfo()
 
