@@ -548,6 +548,48 @@ calculateEnergy <- function(x.data, clustering, prototypes, parameters, ind.t) {
 #' summary(iris.som)
 
 trainSOM <- function (x.data, ...) {
+  UseMethod("trainSOM")
+}
+
+#' @export
+trainSOM.matrix <- function (x.data, ...) {
+  res <- run.trainSOM(x.data, ...)
+  return(res)
+}
+
+#' @export
+trainSOM.double <- function (x.data, ...) {
+  res <- run.trainSOM(x.data, ...)
+  return(res)
+}
+
+#' @export
+trainSOM.data.frame <- function (x.data, ...) {
+  res <- run.trainSOM(x.data, ...)
+  return(res)
+}
+
+#' @export
+trainSOM.numeric <- function (x.data, ...) {
+  res <- run.trainSOM(x.data, ...)
+  return(res)
+}
+
+#' @export
+trainSOM.dist <- function (x.data, ...) {
+  res <- run.trainSOM(x.data, ...)
+  return(res)
+}
+
+#' @export
+trainSOM.kernel <- function (x.data, ...) {
+  dissim <- sweep(sweep(-2*x.data$kernel, 1, diag(x.data$kernel), "+"), 2, diag(x.data$kernel), "+")
+  dissim <- (t(dissim)+dissim)/2
+  res <- run.trainSOM(dissim, ...)
+  return(res)
+}
+
+run.trainSOM <- function (x.data, ...) {
   param.args <- list(...)
   ## Step 1: Parameters handling
   if (!is.matrix(x.data)) x.data <- as.matrix(x.data)

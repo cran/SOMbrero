@@ -122,7 +122,7 @@ The observations are almost uniformly distributed on the map.
 The clustering component allows us to plot the initial data according to the 
 final clustering.
 
-```{r clusteredData, include=TRUE, cache=TRUE}
+```{r clusteredData, cache=TRUE, include=TRUE}
 # prepare a vector of colors
 my.colors <- rainbow(prod(my.som$parameters$the.grid$dim))[my.som$clustering]
 
