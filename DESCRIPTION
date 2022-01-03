@@ -1,6 +1,6 @@
 Package: SOMbrero
 Title: SOM Bound to Realize Euclidean and Relational Outputs
-Version: 1.4
+Version: 1.4-1
 Date: 2022-01-03
 Authors@R: c(person("Nathalie", "Vialaneix", role = c("aut", "cre"), email="nathalie.vialaneix@inrae.fr"),
              person("Elise", "Maigne", role = "aut", email="elise.maigne@inrae.fr"),
@@ -32,7 +32,7 @@ VignetteBuilder: knitr
 Encoding: UTF-8
 RoxygenNote: 7.1.2
 NeedsCompilation: no
-Packaged: 2022-01-03 12:08:15 UTC; nathalie
+Packaged: 2022-01-03 15:29:41 UTC; nathalie
 Author: Nathalie Vialaneix [aut, cre],
   Elise Maigne [aut],
   Jerome Mariette [aut],
@@ -40,4 +40,4 @@ Author: Nathalie Vialaneix [aut, cre],
   Fabrice Rossi [aut],
   Laura Bendhaiba [ctb],
   Julien Boelaert [ctb]
-Date/Publication: 2022-01-03 12:50:06 UTC
+Date/Publication: 2022-01-03 17:10:08 UTC
