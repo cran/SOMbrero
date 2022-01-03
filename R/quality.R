@@ -4,9 +4,14 @@ topographicError <- function (sommap) {
   norm.data <- preprocessData(sommap$data, sommap$parameters$scaling)
   norm.proto <- preprocessProto(sommap$prototypes, sommap$parameters$scaling,
                                 sommap$data)
-  if (sommap$parameters$type == "numeric") {
+  if (sommap$parameters$type == "numeric") { ## TODO: improve code here + add 'heskes' affectation
     all.dist <- apply(norm.data, 1, function(x) {
-      apply(norm.proto, 1, function(y) sum((x - y)^2))
+      apply(norm.proto, 1, function(y) {
+        not.missing <- !is.na(x)
+        x <- x[not.missing]
+        y <- y[not.missing]
+        return(sum((x - y)^2))
+      })
     })
     ind.winner2 <- apply(all.dist, 2, function(x) order(x)[2])
   } else if (sommap$parameters$type == "korresp") {
@@ -42,8 +47,8 @@ quantizationError <- function(sommap) {
   norm.proto <- preprocessProto(sommap$prototypes, sommap$parameters$scaling,
                                 sommap$data)
   if (sommap$parameters$type == "numeric") {
-    values <- norm.data - norm.proto[sommap$clustering,]
-    quantization.error <- sum(apply(values^2, 1, sum)) / nrow(norm.data)
+    values <- norm.data - norm.proto[sommap$clustering, ]
+    quantization.error <- mean(apply(values^2, 1, sum, na.rm = TRUE))
   } else if (sommap$parameters$type == "korresp") {
     nr <- nrow(sommap$data)
     nc <- ncol(sommap$data)
@@ -95,7 +100,7 @@ quantizationError <- function(sommap) {
 #' it calculates the ratio of sample vectors for which the second best matching 
 #' unit is not in the direct neighborhood of the best matching unit.
 #' 
-#' @author Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
+#' @author Madalina Olteanu \email{olteanu@ceremade.dauphine.fr}\cr
 #' Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}
 #' 
 #' @references
@@ -107,9 +112,9 @@ quantizationError <- function(sommap) {
 #' @seealso \code{\link{trainSOM}}, \code{\link{plot.somRes}}
 #' 
 #' @examples 
-#' my.som <- trainSOM(x.data=iris[,1:4])
-#' quality(my.som, quality.type="all")
-#' quality(my.som, quality.type="topographic")
+#' my.som <- trainSOM(x.data = iris[,1:4])
+#' quality(my.som, quality.type = "all")
+#' quality(my.som, quality.type = "topographic")
 
 quality <- function(sommap, quality.type, ...) {
   UseMethod("quality")

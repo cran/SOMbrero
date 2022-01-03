@@ -18,8 +18,8 @@ parameters given to the algorithm (see \code{\link{initSOM}} and
 \tabular{ll}{
 Package: \tab SOMbrero\cr
 Type: \tab Package\cr
-Version: \tab 1.3-1\cr
-Date: \tab 2020-08-10\cr
+Version: \tab 1.4\cr
+Date: \tab 2022-01-03\cr
 License: \tab GPL (>= 2)
 }
 
@@ -27,12 +27,17 @@ The version of the SOM algorithm implemented in this package is the
 stochastic version.
 
 Several variants able to handle non-vectorial data are also implemented in 
-their stochastic versions: \code{type="korresp"} for contingency tables, as 
-described in Cottrell et al., 2004 (with the observation weights defined in 
-Cottrell and Letremy, 2005) and \code{type="relational"} for dissimilarity 
-data, as described in Olteanu and Villa-Vialaneix, 2015a with the fast 
-implementation of Mariette \emph{et al.}, 2017. A special focus has been put 
-on representing graphs, as described in Olteanu and Villa-Vialaneix, 2015b.
+their stochastic versions: \code{type = "korresp"} for contingency tables, as 
+described in Cottrell et al. (2004) (with the observation weights defined in 
+Cottrell and Letrémy, 2005a) and \code{type = "relational"} for dissimilarity 
+data, as described in Olteanu and Villa-Vialaneix (2015a) with the fast 
+implementation of Mariette \emph{et al.} (2017). A special focus has been put 
+on representing graphs, as described in Olteanu and Villa-Vialaneix (2015b).
+
+In addition, the numeric version of the algorithm handles missing values: 
+missing entries are not used during training but the resulting map can be 
+used to fill missing entries (using the entry of the corresponding 
+prototype). The method is taken from Cottrell and Letrémy (2005b).
 }
 \references{
 Kohonen T. (2001) \emph{Self-Organizing Maps}. Berlin/Heidelberg:
@@ -41,9 +46,13 @@ Springer-Verlag, 3rd edition.
 Cottrell M., Ibbou S., Letrémy P. (2004) SOM-based algorithms for qualitative
 variables. \emph{Neural Networks}, \strong{17}, 1149-1167.
 
-Cottrell M., Letrémy P. (2005) How to use the Kohonen algorithm to 
+Cottrell M., Letrémy P. (2005a) How to use the Kohonen algorithm to 
 simultaneously analyse individuals in a survey. \emph{Neurocomputing}, 
 \strong{21}, 119-138.
+
+Cottrell M., Letrémy P. (2005b) Missing values: processing with the Kohonen 
+algorithm. \emph{Proceedings of Applied Stochastic Models and Data Analysis
+(ASMDA 2005)}, 489-496.
 
 Letrémy P. (2005) Programmes basés sur l'algorithme de Kohonen et dediés à
 l'analyse des données. SAS/IML programs for 'korresp'.
@@ -78,9 +87,9 @@ IEEE, Nancy, France.
 Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}\cr
 Élise Maigné <elise.maigne@inrae.fr>\cr
 Jérome Mariette \email{jerome.mariette@inrae.fr}\cr
-Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
+Madalina Olteanu \email{olteanu@ceremade.dauphine.fr}\cr
 Fabrice Rossi \email{fabrice.rossi@apiacoa.org}\cr
-Laura Bendhaiba \email{laurabendhaiba@gmail.com}\cr
+Laura Bendhaïba \email{laurabendhaiba@gmail.com}\cr
 Julien Boelaert \email{julien.boelaert@gmail.com}\cr \cr
 Maintainer: Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}
 }

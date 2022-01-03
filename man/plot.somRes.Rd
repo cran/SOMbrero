@@ -91,16 +91,16 @@ examples.
 }
 \examples{
 # run the SOM algorithm on the numerical data of 'iris' data set
-iris.som <- trainSOM(x.data=iris[,1:4], nb.save=2)
+iris.som <- trainSOM(x.data = iris[, 1:4], nb.save = 2)
 # plots
 # on energy
-plot(iris.som, what="energy") 
+plot(iris.som, what = "energy") 
 # on observations
-plot(iris.som, what="obs", type="lines")
+plot(iris.som, what = "obs", type = "lines")
 # on prototypes
-plot(iris.som, what="prototypes", type="3d", variable="Sepal.Length")
+plot(iris.som, what = "prototypes", type = "3d", variable = "Sepal.Length")
 # on an additional variable: the flower species
-plot(iris.som, what="add", type="pie", variable=iris$Species)
+plot(iris.som, what = "add", type = "pie", variable = iris$Species)
 }
 \seealso{
 \code{\link{trainSOM}} to run the SOM algorithm, that returns a 
@@ -108,6 +108,6 @@ plot(iris.som, what="add", type="pie", variable=iris$Species)
 }
 \author{
 Élise Maigné <elise.maigne@inrae.fr>\cr
-Madalina Olteanu \email{madalina.olteanu@univ-paris1.fr}\cr
+Madalina Olteanu \email{olteanu@ceremade.dauphine.fr}\cr
 Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}
 }
