@@ -4,7 +4,6 @@
 #' @title Self Organizing Maps Bound to Realize Euclidean and Relational Outputs
 #' @name SOMbrero-package
 #' @aliases SOMbrero
-#' @docType package
 #' 
 #' @description This package implements the stochastic (also called on-line) 
 #' Self-Organizing Map (SOM) algorithms for numeric and relational data.
@@ -13,14 +12,6 @@
 #' parameters given to the algorithm (see \code{\link{initSOM}} and 
 #' \code{\link{trainSOM}}). Many graphs can help you with the results (see 
 #' \code{\link{plot.somRes}}).
-#' 
-#' @details \tabular{ll}{
-#' Package: \tab SOMbrero\cr
-#' Type: \tab Package\cr
-#' Version: \tab 1.4-1\cr
-#' Date: \tab 2022-01-03\cr
-#' License: \tab GPL (>= 2)
-#' }
 #' 
 #' The version of the SOM algorithm implemented in this package is the 
 #' stochastic version.
@@ -39,7 +30,7 @@
 #' prototype). The method is taken from Cottrell and Letrémy (2005b).
 #' 
 #' @author Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}\cr
-#' Élise Maigné <elise.maigne@inrae.fr>\cr
+#' Élise Maigné \email{elise.maigne@inrae.fr}\cr
 #' Jérome Mariette \email{jerome.mariette@inrae.fr}\cr
 #' Madalina Olteanu \email{olteanu@ceremade.dauphine.fr}\cr
 #' Fabrice Rossi \email{fabrice.rossi@apiacoa.org}\cr
@@ -64,7 +55,6 @@
 #' 
 #' Letrémy P. (2005) Programmes basés sur l'algorithme de Kohonen et dediés à
 #' l'analyse des données. SAS/IML programs for 'korresp'.
-#' \url{http://samm.univ-paris1.fr/Programmes-SAS-de-cartes-auto}.
 #' 
 #' Mariette J., Rossi F., Olteanu M., Villa-Vialaneix N. (2017) Accelerating 
 #' stochastic kernel SOM. In: M. Verleysen, \emph{XXVth European Symposium on 

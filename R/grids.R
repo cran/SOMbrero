@@ -13,9 +13,9 @@
 #' @param dist.type distance type that defines the topology of the grid (see
 #' 'Details'). Default to \code{"euclidean"}
 #'
-#' @author Élise Maigné <elise.maigne@inrae.fr>\cr
-#' Madalina Olteanu <olteanu@ceremade.dauphine.fr>\cr
-#' Nathalie Vialaneix <nathalie.vialaneix@inrae.fr>
+#' @author Élise Maigné \email{elise.maigne@inrae.fr}\cr
+#' Madalina Olteanu \email{olteanu@ceremade.dauphine.fr}\cr
+#' Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}
 #'
 #' @details The units (neurons) of the grid are positionned at coordinates 
 #' (1,1), (1,2), (1,3), ..., (2,1), (2,2), ..., for the \code{square} topology.
@@ -31,7 +31,6 @@
 #'
 #' @references Letrémy P. (2005) Programmes basés sur l'algorithme de Kohonen 
 #' et dédiés à l'analyse des données. SAS/IML programs for 'korresp'. 
-#' \url{http://samm.univ-paris1.fr/Programmes-SAS-de-cartes-auto}
 #'
 #' @examples
 #' initGrid()
@@ -92,7 +91,7 @@ initGrid <- function(dimension = c(5,5), topo = c("square", "hexagonal"),
 #' display. Default to the cluster number.
 #' @param \dots Further arguments to the \code{\link{plot}} function.
 #' 
-#' @author Élise Maigné <elise.maigne@inrae.fr>\cr
+#' @author Élise Maigné \email{elise.maigne@inrae.fr}\cr
 #' Madalina Olteanu, \email{olteanu@ceremade.dauphine.fr}\cr
 #' Nathalie Vialaneix, \email{nathalie.vialaneix@inrae.fr}
 #' 

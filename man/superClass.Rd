@@ -88,53 +88,50 @@ super-clusters (more details in the section \strong{Details} below).}
 }
 \value{
 The \code{superClass} function returns an object of class 
-\code{somSC} which is a list of the following elements: \itemize{
+\code{somSC} which is a list of the following elements: 
   \item{cluster}{The super clustering of the prototypes (only if either 
   \code{k} or \code{h} are given by user).}
   \item{tree}{An \code{\link{hclust}} object.}
   \item{som}{The \code{somRes} object given as argument (see 
   \code{\link{trainSOM}} for details).}
-}
-
+  
 The \code{projectIGraph.somSC} function returns an object of class 
-\code{\link{igraph}} with the following attributes: \itemize{
-  \item the graph attribute \code{layout} which provides the layout of the 
-  projected graph according to the center of gravity of the super-clusters
-  positionned on the SOM grid;
-  \item the vertex attributes \code{name} and \code{size} which, respectively
-  are the vertex number on the grid and the number of vertexes included in 
-  the corresponding cluster;
-  \item the edge attribute \code{weight} which gives the number of edges (or 
-  the sum of the weights) between the vertexes of the two corresponding 
-  clusters.
-}
+\code{\link{igraph}} with the following attributes: 
+  \item{\code{layout}}{ provides the layout of the projected graph 
+  according to the center of gravity of the super-clusters positioned on 
+  the SOM grid (graph attribute);}
+  \item{\code{name} and \code{size}}{ respectively are the vertex number on 
+  the grid and the number of vertexes included in the corresponding cluster 
+  (vertex attribute);}
+  \item{\code{weight}}{ gives the number of edges (or the sum of the weights)
+   between the vertexes of the two corresponding clusters (edge attribute).}
 }
 \description{
 Aggregate the resulting clustering of the SOM algorithm into 
 super-clusters.
 }
 \details{
-The \code{superClass} function can be used in 2 ways:
-\itemize{
+The \code{superClass} function can be used in 2 ways: \itemize{
   \item to choose the number of super clusters via an \code{\link{hclust}} 
   object: then, both arguments \code{k} and \code{h} are not filled.
   \item to cut the clustering into super clusters: then, either argument 
   \code{k} or argument \code{h} must be filled. See \code{\link{cutree}} for
   details on these arguments.
 }
+  
 The squared distance between prototypes is passed to the algorithm.
 
 \code{summary} on a \code{superClass} object produces a complete summary of 
 the results that displays the number of clusters and super-clusters, the 
 clustering itself and performs ANOVA analyses. For \code{type="numeric"} the 
 ANOVA is performed for each input variable and test the difference of this
-variable accross the super-clusters of the map. For \code{type="relational"} 
+variable across the super-clusters of the map. For \code{type="relational"} 
 a dissimilarity ANOVA is performed (see (Anderson, 2001), except that in the 
 present version, a crude estimate of the p-value is used which is based on 
 the Fisher distribution and not on a permutation test.
 
 On plots, the different super classes are identified in the following ways:
-\itemize{
+\itemize{ 
   \item either with different color, when \code{type} is set among: 
   \code{"grid"} (N, K, R), \code{"hitmap"} (N, K, R), \code{"lines"} (N, K, R), 
   \code{"barplot"} (N, K, R), \code{"boxplot"}, \code{"poly.dist"} (N, K, R), 
@@ -144,8 +141,9 @@ On plots, the different super classes are identified in the following ways:
   \code{"pie"} (N, R)
 }
 
-In the list above, the charts available for a \code{numerical} SOM are maked
-with a N, with a K for a \code{korresp} SOM and with a R for \code{relational} SOM.
+In the list above, the charts available for a \code{numerical} SOM are marked
+with a N, with a K for a \code{korresp} SOM and with a R for 
+\code{relational} SOM.
 
 \code{\link{projectIGraph.somSC}} produces a projected graph from the 
 \link[igraph]{igraph} object passed to the argument \code{variable} as 
@@ -185,7 +183,7 @@ visualizing graphs. \emph{Journal de la Societe Francaise de Statistique},
 \code{\link{plot.somRes}}
 }
 \author{
-Élise Maigné <elise.maigne@inrae.fr>\cr
+Élise Maigné \email{elise.maigne@inrae.fr}\cr
 Madalina Olteanu \email{olteanu@ceremade.dauphine.fr}\cr
 Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}
 }

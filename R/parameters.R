@@ -84,7 +84,7 @@
 #' \code{initSOM} function, plus the default parameters for the ones not 
 #' specified by the user.
 #' 
-#' @author Élise Maigné <elise.maigne@inrae.fr>\cr
+#' @author Élise Maigné \email{elise.maigne@inrae.fr}\cr
 #' Madalina Olteanu \email{olteanu@ceremade.dauphine.fr}\cr
 #' Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}
 #' 
@@ -101,7 +101,6 @@
 #' 
 #' Letrémy P. (2005) Programmes basés sur l'algorithme de Kohonen et dediés à
 #' l'analyse des données. SAS/IML programs for 'korresp'.
-#' \url{http://samm.univ-paris1.fr/Programmes-SAS-de-cartes-auto}.
 #' 
 #' Rossi F. (2013) yasomi: Yet Another Self-Organising Map Implementation. R 
 #' package, version 0.3. \url{https://github.com/fabrice-rossi/yasomi}

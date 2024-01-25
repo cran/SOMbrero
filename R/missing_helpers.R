@@ -45,7 +45,7 @@ impute.somRes <- function(object, ...) {
 }
 
 ## Impute by mean
-mean.imputation <- function(x.data) {
+mean_imputation <- function(x.data) {
   data.miss <- apply(x.data, 2, function(acol) sum(is.na(acol)))
   
   if (any(data.miss) > 0) {

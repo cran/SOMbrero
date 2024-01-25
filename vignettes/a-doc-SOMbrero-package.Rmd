@@ -3,17 +3,16 @@ title: "SOMbrero Package description"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
+    self_contained: true
     theme: journal
     toc: yes
     toc_float:
       collapsed: no
+vignette: >
+  %\VignetteIndexEntry{The SOMbrero package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
-
-<!--
-%\VignetteEngine{knitr}
-%\VignetteIndexEntry{SOMbrero package}
-%\VignettePackage{SOMbrero}
--->
 
 ![](./sombrero.png)
 
@@ -26,9 +25,8 @@ tables, graphs or any 'relational' data described by a dissimilarity matrix).
 
 See ```help(SOMbrero)``` for further details.
 
-```{r loading, results='hide', echo=FALSE, warning=FALSE, message=FALSE}
-library("SOMbrero")
-```
+Information on 
+[grids in SOMbrero](http://sombrero.clementine.wf/articles/b-doc-grids.html)
 
 ### Numeric SOM
 
@@ -36,7 +34,8 @@ The numeric SOM is illustrated on the well-known ```iris``` data set. This data
 describe iris flowers with 4 numeric variables (```Sepal.Length```, 
 ```Sepal.Width```, ```Petal.Length``` and ```Petal.Width```) and a fifth 
 variable (not used to train the SOM) is the flower species. This example is 
-processed in the [numeric SOM guide](./c-doc-numericSOM.html).
+processed in the 
+[numeric SOM guide](http://sombrero.clementine.wf/articles/c-doc-numericSOM.html).
 
 
 ### Contingency tables
@@ -48,7 +47,7 @@ case is illustrated on the ```presidentielles2002``` dataset, which contains the
 number of votes in the first round of the French 2002 presidential election, for 
 each of the French administrative departments (row variables) and each of the
 candidates (column variables). This example is used in the
-[korresp user guide](./d-doc-korrespSOM.html).
+[korresp user guide](http://sombrero.clementine.wf/articles/d-doc-korrespSOM.html).
 
 
 ### Dissimilarity matrices
@@ -59,12 +58,13 @@ extracted from the novel ```Les Miserables```, written by the French author
 Victor Hugo and published during the XIXth century. This dataset provides a
 dissimilarity matrix between the characters of the novel, based on the length
 of shortest paths in a network defined from the novel. This example is provided
-in the [relational user guide](./e-doc-relationalSOM.html).
+in the 
+[relational user guide](http://sombrero.clementine.wf/articles/e-doc-relationalSOM.html).
 
 
 For those who have an **R** developer soul, and who want to help improve this 
-package, the following picture provides an overview the current arborescence of
-the package:
+package, the following picture provides an overview the current function
+dependencies of the package:
 
 ![](./dependencies.png)
 

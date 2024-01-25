@@ -7,8 +7,7 @@
 initGrid(
   dimension = c(5, 5),
   topo = c("square", "hexagonal"),
-  dist.type = c("euclidean", "maximum", "manhattan", "canberra", "minkowski",
-    "letremy")
+  dist.type = c("euclidean", "maximum", "manhattan", "canberra", "minkowski", "letremy")
 )
 }
 \arguments{
@@ -54,14 +53,13 @@ initGrid(dimension=c(5, 7), dist.type = "maximum")
 }
 \references{
 Letrémy P. (2005) Programmes basés sur l'algorithme de Kohonen 
-et dédiés à l'analyse des données. SAS/IML programs for 'korresp'. 
-\url{http://samm.univ-paris1.fr/Programmes-SAS-de-cartes-auto}
+et dédiés à l'analyse des données. SAS/IML programs for 'korresp'.
 }
 \seealso{
 \code{\link{plot.myGrid}} for plotting the grid
 }
 \author{
-Élise Maigné <elise.maigne@inrae.fr>\cr
-Madalina Olteanu <olteanu@ceremade.dauphine.fr>\cr
-Nathalie Vialaneix <nathalie.vialaneix@inrae.fr>
+Élise Maigné \email{elise.maigne@inrae.fr}\cr
+Madalina Olteanu \email{olteanu@ceremade.dauphine.fr}\cr
+Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}
 }

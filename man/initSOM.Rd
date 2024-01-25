@@ -11,8 +11,7 @@ initSOM(
   dimension = c(5, 5),
   topo = c("square", "hexagonal"),
   radius.type = c("gaussian", "letremy"),
-  dist.type = switch(match.arg(radius.type), letremy = "letremy", gaussian =
-    "euclidean"),
+  dist.type = switch(match.arg(radius.type), letremy = "letremy", gaussian = "euclidean"),
   type = c("numeric", "relational", "korresp"),
   mode = c("online"),
   affectation = c("standard", "heskes"),
@@ -141,7 +140,6 @@ Information Science and Statistics series, Springer.
 
 Letrémy P. (2005) Programmes basés sur l'algorithme de Kohonen et dediés à
 l'analyse des données. SAS/IML programs for 'korresp'.
-\url{http://samm.univ-paris1.fr/Programmes-SAS-de-cartes-auto}.
 
 Rossi F. (2013) yasomi: Yet Another Self-Organising Map Implementation. R 
 package, version 0.3. \url{https://github.com/fabrice-rossi/yasomi}
@@ -151,7 +149,7 @@ See \code{\link{initGrid}} for creating a SOM prior structure
 (grid).
 }
 \author{
-Élise Maigné <elise.maigne@inrae.fr>\cr
+Élise Maigné \email{elise.maigne@inrae.fr}\cr
 Madalina Olteanu \email{olteanu@ceremade.dauphine.fr}\cr
 Nathalie Vialaneix \email{nathalie.vialaneix@inrae.fr}
 }

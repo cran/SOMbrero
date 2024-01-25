@@ -56,7 +56,7 @@ obsPrototypes <- function(nb.proto, type, norm.x.data) {
     prototypes <- norm.x.data[selected.obs, ]
     
     # replace columns with missing values by average value of the column
-    prototypes <- mean.imputation(prototypes)
+    prototypes <- mean_imputation(prototypes)
     
   } else if (type == "relational") {
     # selected observations have a coefficients equal to 1
@@ -82,7 +82,7 @@ pcaPrototypes <- function(dim1, dim2, type, norm.x.data) {
   
   if (type == "numeric") {
     # perform PCA (with mean imputation in case of NA)
-    norm.x.data <- mean.imputation(norm.x.data)
+    norm.x.data <- mean_imputation(norm.x.data)
     
     data.pca <- princomp(norm.x.data)
     scores <- data.pca$scores[, c(x.ev, y.ev)]

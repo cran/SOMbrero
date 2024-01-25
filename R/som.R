@@ -313,7 +313,6 @@ calculateEnergy <- function(x.data, clustering, prototypes, parameters, ind.t) {
 #' 
 #' @return The \code{trainSOM} function returns an object of class \code{somRes}
 #' which contains the following components:
-#' \itemize{
 #'   \item{clustering}{ the final classification of the data.}
 #'   \item{prototypes}{ the final coordinates of the prototypes.}
 #'   \item{energy}{ the final energy of the map. For the numeric case, energy 
@@ -325,7 +324,7 @@ calculateEnergy <- function(x.data, clustering, prototypes, parameters, ind.t) {
 #'   \item{data}{ the original dataset used to train the algorithm.}
 #'   \item{parameters}{ a list of the map's parameters, which is an object of 
 #'   class \code{paramSOM} as produced by the function \code{\link{initSOM}}.}
-#' }
+#'   
 #' The function \code{summary.somRes} also provides an ANOVA (ANalysis Of 
 #' VAriance) of each input numeric variables in function of the map's clusters. 
 #' This is helpful to see which variables participate to the clustering.
@@ -380,7 +379,7 @@ calculateEnergy <- function(x.data, clustering, prototypes, parameters, ind.t) {
 #' Neural Networks, Computational Intelligence and Machine Learning (ESANN 
 #' 2017)}, i6doc, Bruges, Belgium, 269-274.
 #' 
-#' @author Élise Maigné <elise.maigne@inrae.fr>\cr
+#' @author Élise Maigné \email{elise.maigne@inrae.fr}\cr
 #' Jérome Mariette \email{jerome.mariette@inrae.fr}\cr
 #' Madalina Olteanu \email{olteanu@ceremade.dauphine.fr}\cr
 #' Fabrice Rossi \email{fabrice.rossi@apiacoa.org}\cr

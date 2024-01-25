@@ -1,12 +1,12 @@
 ## These functions handle plots of somRes objects
 ## ----------------------------------------------------------------------------
-theme_facet<- function (base_size = 11, base_family = "") {
+theme_facet <- function (base_size = 11, base_family = "") {
   theme_bw() %+replace% 
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.text.x = element_text(angle = 90, hjust = 1),
         strip.background = element_blank(),
-        strip.text = element_text(size=8, lineheight = 6),
+        strip.text = element_text(size = 8, lineheight = 6),
         panel.border = element_rect(fill = NA, colour = "grey"),
         panel.spacing = unit(0,'lines')
       )
@@ -19,7 +19,7 @@ ggplotGrid <- function(what, type, values, clustering, show.names,
   
   # Axes labels 
   ################################################
-  if(is.null(args$varname)) {
+  if (is.null(args$varname)) {
     varname <- colnames(values)[1] 
   } else varname <- args$varname
 
@@ -54,9 +54,9 @@ ggplotGrid <- function(what, type, values, clustering, show.names,
     maxi <- max(unlist(values))
     mini <- min(unlist(values))
     # reverse scale (big distance = small proximity)
-    values <- lapply(values, function(x) (maxi - x)/ (maxi - mini))
+    values <- lapply(values, function(x) (maxi - x) / (maxi - mini))
     # Project on [0.05 - 0.45] interval
-    values <- lapply(values, function(x) x * (0.45-0.05) + 0.05)
+    values <- lapply(values, function(x) x * (0.45 - 0.05) + 0.05)
     #values <- lapply(values, function(x) 0.429 * ((maxi-x)/maxi+0.05))
     
     dataplot <- lapply(1:length(values), function(x) 
@@ -72,19 +72,20 @@ ggplotGrid <- function(what, type, values, clustering, show.names,
     }
     
     dataplot$numrow <- rownames(dataplot)
-    dataplot <- merge(dataplot, datacolor, by="id", all.x = TRUE, sort = FALSE)
+    dataplot <- merge(dataplot, datacolor, by = "id", all.x = TRUE, sort = FALSE)
     dataplot <- dataplot[order(dataplot$numrow), ]
     if (is.null(args$sc)) {
       dataplot$varcolor <- ifelse(is.na(dataplot$varcolor), 0, dataplot$varcolor)
     }
     
-    tp <- ggplot(dataplot, aes_string(x = "x", y = "y")) +
-      geom_polygon(data=dataplot, aes_string(fill = "varcolor", group = "id"))
+    tp <- ggplot(dataplot, aes(x = .data$x, y = .data$y)) +
+      geom_polygon(data = dataplot, 
+                   aes(fill = .data$varcolor, group = .data$id))
   }
   
   if (type == "hitmap") {
     if (is.null(args$sc)) {
-      dataplot <- aggregate(data=dataplot, Nb ~ SOMclustering + x + y, length)
+      dataplot <- aggregate(data = dataplot, Nb ~ SOMclustering + x + y, length)
       dataplot$varname <- dataplot$Nb
     } else {
       dataplot <- aggregate(data = dataplot, 
@@ -92,23 +93,23 @@ ggplotGrid <- function(what, type, values, clustering, show.names,
       dataplot$varname <- as.factor(dataplot$varname)
     }
     
-    tp <- ggplot(dataplot, aes_string(x = "x", y = "y")) + 
-      geom_point(aes_string(size = "Nb", color = "varname")) +
-      scale_size_area(breaks=c(min(dataplot$Nb), median(dataplot$Nb), 
-                               max(dataplot$Nb)),
-                      max_size=min(25,max(dataplot$Nb))) +
-      labs(size = "Number of\nobservations") + labs(color=labelcolor)
+    tp <- ggplot(dataplot, aes(x = .data$x, y = .data$y)) + 
+      geom_point(aes(size = .data$Nb, color = .data$varname)) +
+      scale_size_area(breaks = c(min(dataplot$Nb), median(dataplot$Nb), 
+                                 max(dataplot$Nb)),
+                      max_size = min(25,max(dataplot$Nb))) +
+      labs(size = "Number of\nobservations") + labs(color = labelcolor)
   }
   
   if (type == "color") {
     dataplot <- aggregate(data = dataplot, varname ~ SOMclustering + x + y, 
                           mean)
     if (the.grid$topo == "square") {
-      tp <- ggplot(dataplot, aes_string(x = "x", y = "y", fill = "varname")) + 
+      tp <- ggplot(dataplot, aes(x = .data$x, y = .data$y, fill = .data$varname)) + 
         geom_bin2d(stat = "identity", linetype = 1, color = "grey")
     } else {
       if (requireNamespace("hexbin", quietly = TRUE)) {
-        tp <- ggplot(dataplot, aes_string(x = "x", y = "y", fill = "varname")) + 
+        tp <- ggplot(dataplot, aes(x = .data$x, y = .data$y, fill = .data$varname)) + 
           geom_hex(stat = "identity", linetype = 1, color = "grey")
       } else {
         stop("'hexbin' package required for this plot.", call. = TRUE)
@@ -120,13 +121,14 @@ ggplotGrid <- function(what, type, values, clustering, show.names,
     dataplot <- aggregate(data = dataplot, varname ~ SOMclustering + x + y, mean)
     if (the.grid$topo == "square") {
       dataplot$varname <- factor(dataplot$varname)
-      tp <- ggplot(dataplot, aes_string(x = "x", y = "y", fill = "varname")) + 
+      tp <- ggplot(dataplot, aes(x = .data$x, y = .data$y, fill = .data$varname)) + 
         geom_bin2d(stat = "identity", linetype = 1, color = "grey", size = 0.6)
     } else {
       dataplot$varname <- factor(dataplot$varname)
       if (requireNamespace("hexbin", quietly = TRUE)) {
-        tp <- ggplot(dataplot, aes_string(x = "x", y = "y", fill = "varname",
-                                          group = "1")) + 
+        tp <- ggplot(dataplot, 
+                     aes(x = .data$x, y = .data$y, fill = .data$varname, 
+                         group = 1)) + 
           geom_hex(stat = "identity", linetype = 1, color = "grey", size = 0.6)
       } else {
         stop("'hexbin' package required for this plot.", call. = TRUE)
@@ -139,13 +141,14 @@ ggplotGrid <- function(what, type, values, clustering, show.names,
   }
   
   tp <- tp +  ggtitle(myTitle(args, what)) + coord_fixed() + 
-    labs(fill = labelcolor) + theme_void() + theme(panel.border=element_rect(fill = NA, colour = "grey"))
+    labs(fill = labelcolor) + theme_void() + 
+    theme(panel.border = element_rect(fill = NA, colour = "grey"))
 
   if (show.names) {
     datagrid <- data.frame(the.grid$coord, names)
     tp <- tp + geom_text(data = datagrid, 
-                         aes_string(x = "x", y = "y", label = "names", 
-                                    fill = NULL))
+                         aes(x = .data$x, y = .data$y, label = .data$names, 
+                             fill = NULL))
   }
   
   tp
@@ -176,10 +179,10 @@ ggplotFacet <- function(what, type, values, clustering = NULL, show.names,
   }
   if (type == "names") {
     labely <- "frequency of values"
-    if(type == "names" & !is.null(args$varname)) {
+    if (type == "names" & !is.null(args$varname)) {
       labely <- paste("frequency of", args$varname, "values")
     }    
-    if(type == "names" & args$varname %in% c("row.names", "names")) {
+    if (type == "names" & args$varname %in% c("row.names", "names")) {
       labely <- paste("repartition of", args$varname, "values")
     }
   }
@@ -212,30 +215,32 @@ ggplotFacet <- function(what, type, values, clustering = NULL, show.names,
   ################################################
   if (type == "barplot") {
     tp <- ggplot(dataplot, 
-                 aes_string(x = "variable", y = vary, fill = labelcolor)) +
+                 aes(x = .data$variable, y = !! sym(vary), 
+                     fill = !! sym(labelcolor))) +
       geom_bar(stat = "summary", fun = mean, fun.args = list(na.rm = TRUE)) + 
       ylab(labely) 
   }
   if (type == "boxplot") {
     tp <- ggplot(dataplot, 
-                 aes_string(x = "variable", y = vary, fill = labelcolor)) +
+                 aes(x = .data$variable, y = !! sym(vary), 
+                     fill = !! sym(labelcolor))) +
       geom_boxplot() 
   }
   if (type == "lines") {
     if (is.null(args$sc)) {
       tp <- ggplot(dataplot, 
-                   aes_string(x = "variable", y = vary, group = "ind")) +
+                   aes(x = .data$variable, y = !! sym(vary), group = .data$ind)) +
         geom_line(alpha = 0.8) + ylab(labely) 
     } else {
       tp <- ggplot(dataplot, 
-                   aes_string(x = "variable", y = vary, group = "ind", 
-                              color = labelcolor)) +
+                   aes(x = .data$variable, y = !! sym(vary), 
+                       color = !! sym(labelcolor), group = .data$ind)) +
         geom_line(alpha = 0.8) + ylab(labely) 
     }
   } 
   if (type == "meanline") {
-    tp <- ggplot(dataplot, aes_string(x = "variable", y = vary, group = 1,
-                                      colour = labelcolor)) +
+    tp <- ggplot(dataplot, aes(x = .data$variable, y = !! sym(vary), group = 1,
+                               colour = !! sym(labelcolor))) +
       geom_point(stat = "summary", fun = mean, fun.args = list(na.rm = TRUE)) +
       ylab(labely)
     if (is.null(args$sc)) {
@@ -244,7 +249,7 @@ ggplotFacet <- function(what, type, values, clustering = NULL, show.names,
     } else {
       tp <- tp + stat_summary(fun = mean, fun.args = list(na.rm = TRUE),
                               geom = "line",
-                              mapping = aes_string(colour = labelcolor),
+                              mapping = aes(colour = !! sym(labelcolor)),
                               show.legend = FALSE)
     }
   }
@@ -253,15 +258,15 @@ ggplotFacet <- function(what, type, values, clustering = NULL, show.names,
      sizewords <- 4
      if (!is.null(args$size)) sizewords <- args$size
      dataplot <- aggregate(data = dataplot, nb ~ values + SOMclustering, length)
-     tp <- ggplot(dataplot, aes_string(label = "values", size = "nb")) +
+     tp <- ggplot(dataplot, aes(label = .data$values, size = .data$nb)) +
       geom_text_wordcloud(stat = "identity", alpha = 0.7, size = sizewords) +
        labs(subtitle = labely)
   }
   if (type == "words") {
     dataplot <- aggregate(data = dataplot, values ~ variable + SOMclustering, 
                           sum)
-    tp <- ggplot(dataplot, aes_string(label = "variable", size = "values")) +
-      geom_text_wordcloud(stat="identity", alpha=0.7) + 
+    tp <- ggplot(dataplot, aes(label = .data$variable, size = .data$values)) +
+      geom_text_wordcloud(stat = "identity", alpha = 0.7) + 
       labs(subtitle = "sum of values by variable")
   }
   if (type == "pie") {
@@ -270,7 +275,7 @@ ggplotFacet <- function(what, type, values, clustering = NULL, show.names,
     dataplot$Nbcluster <- 1
     datatot <- aggregate(data = dataplot, Nbcluster ~ SOMclustering, sum)
     dataplot <- aggregate(data = dataplot, Nb ~ SOMclustering + values, sum)
-    dataplot <- merge(dataplot, datatot, by="SOMclustering", all.x = TRUE)
+    dataplot <- merge(dataplot, datatot, by = "SOMclustering", all.x = TRUE)
     labely <- "Number of observations in the cluster"
     dataplot$Share <- dataplot$Nb/dataplot$Nbcluster
     # change scale to have proportional areas
@@ -281,12 +286,11 @@ ggplotFacet <- function(what, type, values, clustering = NULL, show.names,
     }
     dataplot$halfNbcluster <- dataplot$Nbcluster/2
     tp <-  ggplot(dataplot, 
-                  aes_string(x = "halfNbcluster", y = "Share", fill = "values",
-                             width = "Nbcluster")) +
-              geom_bar(position = "fill", stat = "identity") + 
-              coord_polar("y") + 
-              ylab(NULL) + xlab("Number of individuals in the cluster") + 
-              guides(fill=guide_legend(title = labelcolor))
+                  aes(x = .data$halfNbcluster, y = .data$Share, 
+                      fill = .data$values, width = .data$Nbcluster)) +
+      geom_bar(position = "fill", stat = "identity") + coord_polar("y") + 
+      ylab(NULL) + xlab("Number of individuals in the cluster") + 
+      guides(fill = guide_legend(title = labelcolor))
   } 
   # Handling of the grid order
   mylabels <- names[ordered.index]
@@ -300,7 +304,7 @@ ggplotFacet <- function(what, type, values, clustering = NULL, show.names,
              ggtitle(myTitle(args, what)) +
              theme_facet()
 
-  if (type == "pie"){
+  if (type == "pie") {
    tp <- tp + theme(axis.text.x = element_blank(),
                     axis.title.y = element_blank(),
                     axis.text.y = element_blank(),
@@ -308,7 +312,7 @@ ggplotFacet <- function(what, type, values, clustering = NULL, show.names,
   } 
   
   # Clusters titles
-  if (!show.names){
+  if (!show.names) {
     tp <- tp + theme(strip.text = element_blank())
   }
   return(tp)
@@ -318,13 +322,12 @@ ggplotFacet <- function(what, type, values, clustering = NULL, show.names,
 ggplotEnergy <- function(sommap) {
   # possible only if some intermediate backups have been done
   if (is.null(sommap$backup)) {
-    stop("no intermediate backups have been registered\n", call.=TRUE)
+    stop("no intermediate backups have been registered\n", call. = TRUE)
   } else {
     dataenergy <- data.frame("Steps" = sommap$backup$steps, 
                              "Energy" = sommap$backup$energy)
-    p <- ggplot(dataenergy, aes_string(x = "Steps", y = "Energy")) + 
-      geom_line() + geom_point() + ggtitle("Energy evolution") +
-      theme_bw() 
+    p <- ggplot(dataenergy, aes(x = .data$Steps, y = .data$Energy)) + 
+      geom_line() + geom_point() + ggtitle("Energy evolution") + theme_bw() 
     p
   }
 }
